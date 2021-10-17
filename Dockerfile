@@ -1,6 +1,6 @@
 
 # Base r from https://hub.docker.com/u/rocker/
-FROM rocker/rstudio
+FROM rocker/tidyverse
 
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R 
@@ -8,7 +8,7 @@ COPY ./DockerConfig/requirements.R /tmp/requirements.R
 RUN Rscript /tmp/requirements.R
 
 # create an R user
-#ENV USER rstudio
+ENV USER expdes
 
 ## Copy your working files over
 ## The $USER defaults to `rstudio` but you can change this at runtime
