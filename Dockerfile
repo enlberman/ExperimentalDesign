@@ -10,8 +10,7 @@ RUN Rscript /tmp/requirements.R
 # create an R user
 ENV USER expdes
 
-#set the proper working directory
-RUN R -e 'setwd("../../container/directory/")'
+
 ## Copy your working files over
 ## The $USER defaults to `rstudio` but you can change this at runtime
 #COPY ./Analysis /home/$USER/Analysis
