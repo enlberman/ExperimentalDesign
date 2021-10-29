@@ -1,1 +1,1 @@
-install.packages(c("tidyverse"))
+install.packages(c("janitor", "feather", "patchwork","glmnet","lme4","stargazer","corrplot","ggpubr","car"))
