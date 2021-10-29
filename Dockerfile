@@ -1,6 +1,6 @@
 
 # Base r from https://hub.docker.com/u/rocker/
-FROM rocker/rstudio
+FROM rocker/tidyverse
 
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R 
