@@ -14,7 +14,7 @@
 ### Running the docker and accessing R Studio in the browser
 
 1. Copy and paste the following command into your browser of choice: `docker run --rm -e PASSWORD=pwd -p 8787:8787 enluchicago/experimental_design:latest` **make sure to replace** `pwd` **with a password of your choice**
-2. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above.
+2. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above. This should look like a normal R Studio window. ()
 3. Congrats you can now use R-Studio and have all of the dependencies for the course already setup. [^1]
 
 [^1]: Note that even though we are using the browser to interact with R-Studio, all of the code is being run on your computer and not through the browser. You can check this for yourself by pulling up a system monitor while you run something computationally intenstive. 
@@ -29,6 +29,8 @@ We can get around this by linking folders on our computer to folders on the cont
 To setup a folder that you can use for both quarters of this class:
 
 1. Make new folder on your computer to save all of your work and data. For example I might make the folder `/home/andrewstier/Classes/ExperimentalDesignI_II`, which is a subfolder of my existing `Classes` folder. 
-2. Use the following command whenever you start the docker container `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes enluchicago/experimental_design:latest'
+2. Use the following command whenever you start the docker container `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes enluchicago/experimental_design:latest`
 
-For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest'
+For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest`
+
+Once I have done this I can make new files that save into this folder! ()
