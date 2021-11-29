@@ -3,7 +3,7 @@
 
 ### Docker Installation Setup
 
-1. go to (https://docs.docker.com/get-docker/) and follow the instructions to download docker desktop for you operating system. The landing page should look something like: ()
+1. go to (https://docs.docker.com/get-docker/) and follow the instructions to download docker desktop for you operating system. The landing page should look something like: (https://github.com/enlberman/ExperimentalDesign/blob/main/docker%20options.png)
 2. Once docker is downloaded and installed open a terminal (Mac and Linux search for the 'Terminal' application; Windows search for the 'Command Prompt Application')
 3. Copy and paste the following command into the window `docker pull enluchicago/experimental_design:latest`
 4. Thats it! See below for basic usage.
@@ -14,7 +14,7 @@
 ### Running the docker and accessing R Studio in the browser
 
 1. Copy and paste the following command into your browser of choice: `docker run --rm -e PASSWORD=pwd -p 8787:8787 enluchicago/experimental_design:latest` **make sure to replace** `pwd` **with a password of your choice**
-2. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above. This should look like a normal R Studio window. ()
+2. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above. This should look like a normal R Studio window. (https://github.com/enlberman/ExperimentalDesign/blob/main/r%20studio.png)
 3. Congrats you can now use R-Studio and have all of the dependencies for the course already setup. [^1]
 
 [^1]: Note that even though we are using the browser to interact with R-Studio, all of the code is being run on your computer and not through the browser. You can check this for yourself by pulling up a system monitor while you run something computationally intenstive. 
@@ -33,4 +33,4 @@ To setup a folder that you can use for both quarters of this class:
 
 For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest`
 
-Once I have done this I can make new files that save into this folder! ()
+Once I have done this I can make new files that save into this folder! (https://github.com/enlberman/ExperimentalDesign/blob/main/hello.png)
