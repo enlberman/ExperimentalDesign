@@ -20,7 +20,7 @@
 [^1]: Note that even though we are using the browser to interact with R-Studio, all of the code is being run on your computer and not through the browser. You can check this for yourself by pulling up a system monitor while you run something computationally intenstive. 
 
 
-### Linking folders on your computer to the docker container
+### Linking folders on your computer to the docker container *(VERY IMPORTANT)*
 
 It is important to remember that docker containers are self contained operating systems and **anything you save locally to a docker container will be erased when you restart the container**. 
 
