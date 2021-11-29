@@ -3,7 +3,7 @@
 
 ### Docker Installation Setup
 
-1. go to (https://docs.docker.com/get-docker/) and follow the instructions to download docker desktop for you operating system. The landing page should look something like: (https://github.com/enlberman/ExperimentalDesign/blob/main/docker%20options.png)
+1. go to (https://docs.docker.com/get-docker/) and follow the instructions to download docker desktop for you operating system. The landing page should look something like: ![](https://github.com/enlberman/ExperimentalDesign/blob/main/docker%20options.png)
 2. Once docker is downloaded and installed open a terminal (Mac and Linux search for the 'Terminal' application; Windows search for the 'Command Prompt Application')
 3. Copy and paste the following command into the window `docker pull enluchicago/experimental_design:latest`
 4. Thats it! See below for basic usage.
