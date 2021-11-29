@@ -13,15 +13,22 @@
 
 ### Running the docker and accessing R Studio in the browser
 
-1. Copy and paste the following command into your browser of choice: `docker run --rm -e PASSWORD=pwd -p 8787:8787` **make sure to replace `pwd` with a password of your choice**
+1. Copy and paste the following command into your browser of choice: `docker run --rm -e PASSWORD=pwd -p 8787:8787 enluchicago/experimental_design:latest` **make sure to replace** `pwd` **with a password of your choice**
+2. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above.
+3. Congrats you can now use R-Studio and have all of the dependencies for the course already setup. [^1]
+
+[^1]: Note that even though we are using the browser to interact with R-Studio, all of the code is being run on your computer and not through the browser. You can check this for yourself by pulling up a system monitor while you run something computationally intenstive. 
 
 
+### Linking folders on your computer to the docker container
 
-docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes enluchicago/experimental_design:latest
+It is important to remember that docker containers are self contained operating systems and **anything you save locally to a docker container will be erased when you restart the container**. 
 
-on my computer I might replace path-to-work-directory-on-local-computer with /home/andrewstier/Downloads
-and replace pwd with stiera
+We can get around this by linking folders on our computer to folders on the container. This is done by adding the option `-v path-to-work-directory-on-local-computer:/home/expdes` to the `docker run` command. This will link the folder that you chose to the `/home/expdes` folder on the docker container and let you save your work and data outside of the container.
 
-In a browser window type http://localhost:8787/
+To setup a folder that you can use for both quarters of this class:
 
-sign in with username "expdes" and the password you choose
+1. Make new folder on your computer to save all of your work and data. For example I might make the folder `/home/andrewstier/Classes/ExperimentalDesignI_II`, which is a subfolder of my existing `Classes` folder. 
+2. Use the following command whenever you start the docker container `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes enluchicago/experimental_design:latest'
+
+For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest'
