@@ -5,6 +5,11 @@ FROM rocker/tidyverse
 ## Copy requirements.R to container directory /tmp
 COPY ./DockerConfig/requirements.R /tmp/requirements.R 
 
+# Define Libsodium version
+ENV LIBSODIUM_VERSION 1.0.18
+
+# Define workdir
+WORKDIR /root
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
