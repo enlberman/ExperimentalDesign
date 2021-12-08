@@ -13,11 +13,12 @@ ENV USER expdes
 RUN mkdir /home/$USER/
 
 RUN mkdir /home/$USER/public
+RUN mkdir /home/$USER/data
 RUN mkdir /home/$USER/public/grdg
 RUN mkdir /home/$USER/public/grdg/srcs
 
-#COPY ./Data/id_rsa /home/$USER/public/
-#COPY ./Data/getGrades.r /home/$USER/public/grdg/srcs
+COPY ./Data/id_rsa /home/$USER/public/
+COPY ./Data/getGrades.r /home/$USER/public/grdg/srcs
 ## Copy your working files over
 ## The $USER defaults to `rstudio` but you can change this at runtime
 #COPY ./Analysis /home/$USER/Analysis
