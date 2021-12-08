@@ -10,6 +10,8 @@ RUN Rscript /tmp/requirements.R
 # create an R user
 ENV USER expdes
 
+RUN ls /home/
+
 RUN mkdir /home/$USER/public
 RUN mkdir /home/$USER/public/grdg
 RUN mkdir /home/$USER/public/grdg/srcs
