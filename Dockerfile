@@ -10,11 +10,11 @@ RUN Rscript /tmp/requirements.R
 # create an R user
 ENV USER expdes
 
-#RUN ls /home/
+RUN mkdir /home/$USER/
 
-#RUN mkdir /home/$USER/public
-#RUN mkdir /home/$USER/public/grdg
-#RUN mkdir /home/$USER/public/grdg/srcs
+RUN mkdir /home/$USER/public
+RUN mkdir /home/$USER/public/grdg
+RUN mkdir /home/$USER/public/grdg/srcs
 
 #COPY ./Data/id_rsa /home/$USER/public/
 #COPY ./Data/getGrades.r /home/$USER/public/grdg/srcs
