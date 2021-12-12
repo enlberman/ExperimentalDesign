@@ -34,3 +34,5 @@ To setup a folder that you can use for both quarters of this class:
 For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest`
 
 Once I have done this I can make new files that save into this folder! ![](https://github.com/enlberman/ExperimentalDesign/blob/main/hello.png)
+
+### Troubleshooting
