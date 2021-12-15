@@ -16,7 +16,7 @@
 1. Copy and paste the following command into your terminal window of choice (see above): `docker run --rm -e PASSWORD=pwd -p 8787:8787 enluchicago/experimental_design:latest` **make sure to replace** `pwd` **with a password of your choice.** **DO NOT CLOSE THE TERMINAL WINDOW**
     a. If this doesn't work and you get an error message saying that the port is already allocated try replacing 8787:8787 with 8080:8787.
 3. In a browser window go to (http://localhost:8787/) and enter the username `expdes` and the password you chose above. This should look like a normal R Studio window. ![](https://github.com/enlberman/ExperimentalDesign/blob/main/r%20studio.png)
-    a. If you changed the port above to 8080 go to http://localhost:8787/.
+    a. If you changed the port above to 8080 go to http://localhost:8080/.
 5. Congrats you can now use R-Studio and have all of the dependencies for the course already setup. [^1]
 
 [^1]: Note that even though we are using the browser to interact with R-Studio, all of the code is being run on your computer and not through the browser. You can check this for yourself by pulling up a system monitor while you run something computationally intenstive. 
