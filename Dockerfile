@@ -44,12 +44,18 @@ ENV USER expdes
 RUN mkdir /home/$USER/
 
 RUN mkdir /home/$USER/public
+RUN mkdir /home/$USER/templates
+RUN mkdir /home/$USER/outputs
+RUN mkdir /home/$USER/test_files
 RUN mkdir /home/$USER/data
 RUN mkdir /home/$USER/public/grdg
 RUN mkdir /home/$USER/public/grdg/srcs
 
 COPY ./Data/id_rsa /home/$USER/public/
+COPY ./Data/hw1_test.encryptr.bin /home/$USER/test_files/
 COPY ./Data/getGrades.r /home/$USER/public/grdg/srcs
+COPY ./Data/sampledata.txt /home/$USER/data
+COPY ./Data/HW1_template.RMD /home/$USER/templates
 ## Copy your working files over
 ## The $USER defaults to `rstudio` but you can change this at runtime
 #COPY ./Analysis /home/$USER/Analysis
