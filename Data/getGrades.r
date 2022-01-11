@@ -9,7 +9,7 @@ grade_my_hw <- function(x,test_file){
   readr::write_file(decrypted_text, 'tmp_test.r')
   trial_test <- data.frame(testthat::test_file('tmp_test.r', reporter = "minimal"))
   file.remove('tmp_test.r')
-  trial_test <- trial_test[trial_test$test==x]
+  trial_test <- trial_test[trial_test$test==x,]
   return(trial_test$failed == 0)
 }
 
