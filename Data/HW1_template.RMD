@@ -1,0 +1,131 @@
+---
+title: "Homework 1"
+author: "Andrew Stier"
+date: "`r Sys.time()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<!---
+In order to check that all the necessary packages are installed, Click the File > New File > R Markdown button and keep all of the options as is. Save the document somewhere, and, while that new document is open, click the knit button. If a window with some plots shows up, everything is installed correctly. If RStudio prompts you to install any packages, you should install them.
+-->
+
+<!---
+Please save this file as Homework1_lastname_firstname.Rmd
+
+Be sure to update the author field in the block above.
+
+While you are working on your homework, you can use the green arrows to run a "chunk" of code. In order to produce the final document, use the knit button. You will turn in both the Rmd file and the knitted html file, which will appear next to wherever you saved the Rmd file if there are no errors.
+
+Beware, if you run chunks out of order or reuse variable names your code may produce different results when it is run again from top to bottom. Before you knit your document, it is a good idea to run all the chunks in order from top to bottom in a clean environment. Use the broom button in the environment pane to clear your variables and click the Session > Restart R and Run All Chunks.
+
+If you ever want to reference the documentation about a function, go to the console below and type ?function_name. Try it now with ?read_csv.
+-->
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse)  # loads many useful packages
+source('/home/expdes/public/grdg/srcs/getGrades.r') # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw1_test.encryptr.bin'
+```
+
+# Part 1: Describe the type of data you work with
+
+your response here
+
+  a.
+
+  b.
+
+  c.
+
+  d.
+
+
+# Part 2: List 3 potential ways in which bad / noisy data could be generated in this experiment. (Example: participants could get fatigued near the end of the experiment and have slower reaction times).
+  ## List the 3 ways in order below
+  1.
+
+  2.
+
+  3.
+
+# Part 3: List 2 methods used in this experiment to try to reduce participant error.
+  ## List the 2 methods in order below
+  1.
+
+  2.
+
+# Part 4: Describe a potential confound that could be present in this experiment that would need to be controlled for.
+
+# Part 5: Import the data
+
+```{r 5.1}
+# read the data in
+fileobj = file('/home/expdes/data/sampledata.txt','r')
+lines <- readLines(fileobj)
+
+# now separate the lines from the study phase and the test phase
+line_phase <- lapply(lines, function(x){str_split(x[1], " ")[[1]][1]}) # get the first space separated element of each line
+study_lines <- lines[line_phase == "study"]
+test_lines <- lines[line_phase == "test"]
+
+# now create the study data frame
+# first we write the study lines out to a temp file
+tempFile = file('tmp_study.txt','w')
+writeLines(study_lines,tempFile)
+close(tempFile)
+
+# now do the same for the test data frame
+# first we write the study lines out to a temp file
+tempFile = file('tmp_test.txt','w')
+writeLines(test_lines,tempFile)
+close(tempFile)
+
+```
+#5.1
+Please explain what this code does:
+
+Line 75:
+Line 76:
+Line 77:
+
+Lines 81 & 87:
+Lines 82 & 88:
+Lines 83 & 89:
+
+```{r 5.2}
+
+```
+
+```{r gradeQ5}
+passed <- grade_my_hw("5.2", test_file_path)
+show_grade(passed, "5.2")
+```
+
+```{r 6.1}
+
+```
+
+```{r gradeQ6}
+passed <- grade_my_hw("6.1", test_file_path)
+show_grade(passed, "6.1")
+```
+
+
+```{r 7.1}
+#### gsub is an r function that lets you find and replace substrings. It may be helpful here
+
+```
+
+```{r gradeQ7}
+passed <- grade_my_hw("7.1", test_file_path)
+show_grade(passed, "7.1")
+```
+

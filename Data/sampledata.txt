@@ -1,0 +1,6 @@
+study stream_forg 4 1287 2
+study car_dealership_mem 2 2486 2
+study mall_mem 3 2014 2
+test outdoor_court_mem 2 1454 1 "none" 1149 1
+test car_dealership_mem 1 2486 1 "Cardealership" 2995 2
+test mall_mem 1 2014 1 "palm tree" 5135 2
