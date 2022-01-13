@@ -32,9 +32,9 @@ We can get around this by linking folders on our computer to folders on the cont
 To setup a folder that you can use for both quarters of this class:
 
 1. Make new folder on your computer to save all of your work and data. For example I might make the folder `/home/andrewstier/Classes/ExperimentalDesignI_II`, which is a subfolder of my existing `Classes` folder. 
-2. Use the following command whenever you start the docker container `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes enluchicago/experimental_design:latest`
+2. Use the following command whenever you start the docker container `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v path-to-work-directory-on-local-computer:/home/expdes/local enluchicago/experimental_design:latest`
 
-For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes enluchicago/experimental_design:latest`
+For my folder that I created this would look like `docker run --rm -e PASSWORD=pwd -p 8787:8787 -v /home/andrewstier/Classes/ExperimentalDesignI_II:/home/expdes/local enluchicago/experimental_design:latest`
 
 Once I have done this I can make new files that save into this folder! ![](https://github.com/enlberman/ExperimentalDesign/blob/main/hello.png)
 
