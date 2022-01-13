@@ -34,7 +34,21 @@ RUN \
     make install && \
     mv src/libsodium /usr/local/ && \
     rm -Rf /tmpbuild/
-    
+
+
+## install relevant x11 libraries for R
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    libx11-6 \
+    libxss1 \
+    libxt6 \
+    libxext6 \
+    libsm6 \
+    libice6 \
+    xdg-utils \
+  && rm -rf /var/lib/apt/lists/*
+  
+  
 ## install required R libraries
 RUN Rscript /tmp/requirements.R
 
