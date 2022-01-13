@@ -10,7 +10,7 @@ grade_my_hw <- function(x,test_file){
   trial_test <- data.frame(testthat::test_file('tmp_test.r', reporter = "minimal"))
   file.remove('tmp_test.r')
   trial_test <- trial_test[trial_test$test==x,]
-  return(trial_test$failed == 0)
+  return((trial_test$failed == 0) & (trial_test$error == F))
 }
 
 show_grade <- function(p, x){
