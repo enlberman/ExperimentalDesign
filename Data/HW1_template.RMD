@@ -27,7 +27,8 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
 
 library(tidyverse)  # loads many useful packages
-source('/home/expdes/public/grdg/srcs/getGrades.r') # for grading questions
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
 set.seed(1)  # Ensures reproducable results
 
 theme_set(theme_minimal())  # My personal preference for less ugly default plots
@@ -105,7 +106,7 @@ Lines 83 & 89:
 ```
 
 ```{r gradeQ5}
-passed <- grade_my_hw("5.2", test_file_path)
+passed <- grade_my_hw("5.2", test_file_path, loc)
 show_grade(passed, "5.2")
 ```
 
@@ -114,7 +115,7 @@ show_grade(passed, "5.2")
 ```
 
 ```{r gradeQ6}
-passed <- grade_my_hw("6.1", test_file_path)
+passed <- grade_my_hw("6.1", test_file_path, loc)
 show_grade(passed, "6.1")
 ```
 
@@ -125,7 +126,7 @@ show_grade(passed, "6.1")
 ```
 
 ```{r gradeQ7}
-passed <- grade_my_hw("7.1", test_file_path)
+passed <- grade_my_hw("7.1", test_file_path, loc)
 show_grade(passed, "7.1")
 ```
 
