@@ -2,9 +2,9 @@ library(testthat)
 library(sodium)
 library(DiagrammeR)
 
-grade_my_hw <- function(x,test_file){
+grade_my_hw <- function(x,test_file,loc){
   encrypted_text2 <- as.raw(as.hexmode((readr::read_lines(test_file))))
-  key2 <- as.raw(as.hexmode((readr::read_lines('/home/expdes/public/id_rsa'))))
+  key2 <- as.raw(as.hexmode((readr::read_lines(file.path(loc,'id_rsa')))))
   decrypted_text <- unserialize(simple_decrypt(encrypted_text2, key2))
   readr::write_file(decrypted_text, 'tmp_test.r')
   trial_test <- data.frame(testthat::test_file('tmp_test.r', reporter = "minimal"))
