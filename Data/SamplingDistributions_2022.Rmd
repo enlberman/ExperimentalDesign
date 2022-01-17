@@ -1,0 +1,304 @@
+---
+title: "Sampling Distributions & Simulating Data"
+author: "Jake Butts, Colin Quirk"
+date: "1/18/2022"
+output: html_document
+---
+
+## Tutorial Objectives
+
+1. Simulating data with different distributions (normal, skewed, binomial)
+2. Writing functions to perform repetitive tasks.
+3. See the CLT in action with different distributions of data
+4. Generating Toy Data to test your code.
+
+--------------------------
+
+To start out, let's load some helpful packages and set our preferences. 
+
+```{r setup, message=F}
+#install.packages("tidyverse")
+library(tidyverse)
+
+theme_set(theme_minimal())  # pretty plots
+
+set.seed(42)
+
+knitr::opts_chunk$set(message=F)  # Prevents output we don't care about
+```
+## Simulating Data w/ a Normal Distribution
+Let's simulate data from an imaginary experiment measuring reaction time (RT) where we want to know how fast participants are able to respond to a particular stimulus. 
+
++ Imagine we have a population mean = μ = 350 ms and a population standard deviation = σ = 55.
+
++ For simplification, let's say we recorded a **single** RT for each of the 1000 participants we collected on mTurk (no repeated measures) and let's round to the nearest ms.
+
+
+```{r create_data}
+
+population_mean = 350
+population_sd = 55
+
+# `rnorm` can simulate values from a specified **normal** distribution, type `?rnorm` on the console for more info.
+
+rt_data = data.frame(trial = 1:1000, rt = round(rnorm(1000, 350, 55)))
+
+str(rt_data) # check the structure of the data. Is it what we expect?
+head(rt_data) # see the top 6 rows of the data. 
+
+```
+
+Now, let's visualize our simulated population data using ggplot to make a histogram. Here, let's also add in vertical lines at the mean (solid red line) and plus/minus one sd (dashed red lines) just to visualize how our parameters line up with the data we generated.
+
+```{r}
+ggplot(rt_data, aes(x = rt)) +
+  geom_histogram()+ 
+  geom_vline(xintercept=350,colour = "red")+
+geom_vline(xintercept=c(295,405), linetype="dashed",colour = "red")
+```
+
+As you can see, we have a normal distribution around our μ of 350 ms. 
+
+
+**Note:** 
+
+We will use ggplot a lot in this course. More on plotting later, but for now, type`?ggplot` on the console if you need more info. Alternatively, Hadley Wickham's R for Data Science (free online) has an entire section on visualizing data that may be helpful.
+
+### Sampling from Normally Distributed Data
+
+Now that we have our population distribution set up. Let's start sampling!
+
+First, let's see what happens when we take 1000 samples with a sample size of n = 15 from this population. 
+
+*To do this, we will create our own function that gets a random sample of `n` subjects from `data` and calculates the mean of the `column` for that sample .*
+
+*Writing your own function is incredibly useful for automating tasks in R that would otherwise require lots of copying and pasting and thus could lead to errors/repetitive code that is hard for a reader to follow.*  
+
+```{r}
+
+#In the first line we give our function a name "get_sample_mean" and specify the inputs
+#In the second line we use the pre-built "sample_n" function to get a sample of a certain "sample_size" from the "data"
+#In the third line we calculate the mean of the "column" of the sample generated above
+
+get_sample_mean = function(sample_size, data, column) {
+  sample = data %>% sample_n(sample_size)
+  mean(sample[[column]]) 
+}
+
+#Let's take a sample of 15 our sample size to 15.
+
+n = 15
+
+# With the function written, we can now call the function specifying our inputs-- the "sample_size" (n), the "data" (rt_data), and the "column" from which we want to calculate the mean (rt). 
+
+get_sample_mean(n, rt_data, 'rt')
+
+#Try running this a few times to see how our sample mean varies with each random sample. 
+```
+
+In order to run our function many times (e.g. 1000 times), we can use the `replicate` function. `replicate` takes the number of times you want to do something and the function you want to run.
+
+```{r}
+
+n = 15
+
+samples = replicate(1000, get_sample_mean(n, rt_data, 'rt'))
+
+sample_data = data.frame(sample = 1:1000, sample_mean = samples)
+
+head(sample_data)
+```
+
+Now we will plot the distribution of our sample means.
+
+```{r}
+ggplot(sample_data, aes(x = sample_mean)) +
+  geom_histogram() +
+  coord_cartesian(xlim=c(300, 400))
+```
+
+Let's look at some interesting features of our sampling distribution.
+
+```{r}
+mean(sample_data$sample_mean)
+sd(sample_data$sample_mean)
+```
+
+The mean of our sampling distribution is very close to our population mean of 350, however there is some variance. The standard deviation of our sampling distribution is controlled by the n of our sample (i.e. the sample size of our experiment). Let's increase the n to 100 and see what happens to the sd of our sampling distribution.
+
+```{r}
+n = 100
+
+samples = replicate(1000, get_sample_mean(n, rt_data, 'rt'))
+
+sample_data = data.frame(sample = 1:1000, sample_mean = samples)
+
+head(sample_data)
+```
+
+Now we plot the new sampling distribution.
+
+```{r}
+ggplot(sample_data, aes(x = sample_mean)) +
+  geom_histogram() +
+  coord_cartesian(xlim=c(300, 400))
+```
+
+Visually, the distribution is much more narrow.
+
+```{r}
+mean(sample_data$sample_mean)
+sd(sample_data$sample_mean)
+```
+
+And the math checks out. Again, we are close to the population mean in aggregate, but there is much less variability across the estimates. This property is why it is better to have more subjects in an experiment.
+
+
+## Simulating Skewed Data
+
+In real life, reaction times usually have skew. Let's introduce this into our simulation and see what happens.
+
+```{r}
+
+# `rbeta` can simulate values from a specified **skewed** distribution, type `?rbeta` on the console for more info.
+
+rt_data_skew = data.frame(trial = 1:1000, rt = rbeta(1000, 2, 4) * 1050) 
+
+ggplot(rt_data_skew, aes(x = rt)) +
+  geom_histogram()
+```
+
+### Sampling from Skewed Data
+
+Now we will draw 1,000 samples with n = 15 like before and plot the distribution of the samples. 
+
+```{r}
+n = 15
+
+samples = replicate(1000, get_sample_mean(n, rt_data_skew, 'rt'))
+
+sample_data_skew = data.frame(sample = 1:1000, sample_mean = samples)
+
+ggplot(sample_data_skew, aes(x = sample_mean)) +
+  geom_histogram()
+
+```
+
+The skew is gone in the sampling distribution thanks to the central limit theorem.
+
+## Simulating Binomial Data
+
+This idea works even for extremely non-normal distributions. Let simulate flipping a coin 1000 times.
+
+```{r}
+coin_flips = data.frame(trial = 1:1000, flip = rbinom(1000, 1, 0.5))
+
+ggplot(coin_flips, aes(x = flip)) +
+  geom_histogram()
+```
+
+### Sampling from Binomial Data
+Obviously, this population data is not normal. Let's sample 15 coin flips from this distribution 1,000 times.
+
+```{r}
+n = 15
+
+samples = replicate(1000, get_sample_mean(n, coin_flips, 'flip'))
+
+sample_flips = data.frame(sample = 1:1000, sample_mean = samples)
+
+head(sample_flips)
+```
+
+
+```{r}
+ggplot(sample_flips, aes(x = sample_mean)) +
+  geom_histogram()
+```
+
+Despite starting with binary data, the sampling distribution is still approximately normal. The histogram looks a little strange because, with n = 15, there's a fairly limited number of possible means. Let's try to clean that up by increasing the n to 100.
+
+```{r}
+n = 100
+
+samples = replicate(1000, get_sample_mean(n, coin_flips, 'flip'))
+
+sample_flips = data.frame(sample = 1:1000, sample_mean = samples)
+
+ggplot(sample_flips, aes(x = sample_mean)) +
+  geom_histogram(bins=40)
+
+
+```
+
+The histogram still has some gaps, but it is looking closer to normal. Notice again that the sd of the sampling distribution is less than when n = 15.
+
+No matter what our sample data looks like, we can make some good guesses about what the distribution of sample means looks like. The standard deviation of the sampling distribution is called the standard error, and we can estimate it using the number of samples we have (n). Knowing how variable our estimate is important for hypothesis testing and creating confidence intervals.
+
+## Generating Toy Data
+
+We've learned how to simulate data to fit particular distributions and population parameters. Now let's put this simulation to work to generate toy data that we can use to test our code on. 
+
+Let's consider a simple experiment using the Stroop Task. Are participants slower at identifying the color of the text when the word meaning differs (i.e.inconsistent,  "Blue" written in red text) than when the color and word meaning match (i.e. consistent,"Green" written in green text)? 
+
+---------
+Let's imagine a study where 100 participants complete 20 trials (10 consistent, 10 inconsistent trials) and we measure how long it takes them to say the name of the color written in text (rt)
+
+#### Simulated Null Data
+First let's simulate data where there is **no difference** in rt between the two trial types. 
+
+```{r}
+
+subject = rep(c(1:100), each=20) 
+#each subject does 20 trials total
+trial_type = factor(rep(c("consistent", "inconsistent"), each=10, times = 2000)) 
+#10 consistent and 10 inconsistent trials
+rt= as.numeric(rep(rbeta(2000, 2, 4) * 1050)) 
+#creating rt with skewed distribution
+  
+null_subject_condition_data= data.frame(subject,trial_type,rt) 
+
+
+#let's look at the distribution of rt's for each trial_type
+
+ggplot(null_subject_condition_data, aes(x=rt, fill=trial_type))+
+  geom_histogram(position="identity", alpha=0.5)
+
+```
+
+As expected,the distribution of rt's for consistent and inconsistent trials look nearly identical, with just a little bit of random noise.  
+
+#### Simulated Differences in Trial Types
+
+Above, we generated simulated data in which both trail types drew samples from the same distribution leading to rts with no condition differences (null). Let's now use this null data to generate a toy data set that has a difference in rt between conditions.
+
+```{r}
+condition_differences_data<-null_subject_condition_data%>%
+  mutate(rt_diff= ifelse(trial_type=="inconsistent",rt*1.5,rt))
+
+head(condition_differences_data)
+tail(condition_differences_data)
+
+
+ggplot(condition_differences_data, aes(x=rt_diff, fill=trial_type))+
+  geom_histogram(position="identity", alpha=0.5)
+
+# let's compare mean rts for each trial_type
+
+condition_differences_data%>%
+  group_by(trial_type)%>%
+  summarize(mean(rt_diff))
+         
+```
+
+The mean rt for inconsistent trials is now noticeably higher than the mean rt of consistent trials. 
+
+### Going Forward
+
+1. Here, we used an arbitrary difference (1.5x) between the two trial types in our simulated data for illustration purposes. Think about how you might simulate your toy data more carefully. What would you reasonably expect condition differences to look like? How might you figure out what a reasonable set of toy data should look like?
+
+2. Many studies involve more than two conditions or have additional variables we might care about. Consider how you might modify the code above to include additional conditions or variables of interest. 
+
+
+
+
