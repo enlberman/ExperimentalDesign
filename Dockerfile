@@ -59,6 +59,7 @@ RUN mkdir /home/$USER/
 
 RUN mkdir /home/$USER/public
 RUN mkdir /home/$USER/demos
+RUN mkdir /home/$USER/demos/OnlineExperiment
 RUN mkdir /home/$USER/templates
 RUN mkdir /home/$USER/outputs
 RUN mkdir /home/$USER/test_files
@@ -73,6 +74,8 @@ COPY ./Data/sampledata.txt /home/$USER/data
 COPY ./Data/HW1_template.RMD /home/$USER/templates
 COPY ./Data/SamplingDistributions_2022.Rmd /home/$USER/demos
 COPY ./Data/SamplingDistributions_2022.html /home/$USER/demos
+COPY ./Data/DataVisualization.Rmd /home/$USER/demos
+COPY ./Data/2020ExpData/*.txt /home/$USER/demos/OnlineExperiment
 ## Copy your working files over
 ## The $USER defaults to `rstudio` but you can change this at runtime
 #COPY ./Analysis /home/$USER/Analysis
