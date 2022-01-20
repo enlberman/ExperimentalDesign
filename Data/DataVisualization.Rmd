@@ -19,7 +19,7 @@ theme_set(theme_minimal())
 Here is where we read in the raw data.
 ```{r}
 # In the raw data, there is one file per subject. This is making a list of all the files we need to read in
-root_dir <- "/home/expdes/local/OnlineExperimentData/"
+root_dir <- "/home/expdes/demos/OnlineExperiment/"
 file_list <- list.files(path = root_dir, pattern = "\\.txt$")
 # This is saving the number of subjects we have, to use later
 n <- length(file_list)
