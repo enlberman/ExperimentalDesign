@@ -1,0 +1,126 @@
+study mountain_road_mem 2 3619 2
+study arch_mem 3 1755 2
+study ice_forg 3 2679 2
+study canal_forg 3 2323 2
+study forest_forg 4 2682 2
+study highway_mem 3 3229 2
+study bathroom_mem 1 2493 2
+study bedroom_mem 3 2678 2
+study sunset_forg 4 2788 2
+study farmland_mem 2 6619 2
+study deli_mem 3 1619 2
+study ranch_forg 2 2729 2
+study river_bridge_mem 5 2434 2
+study tracks_mem 2 1867 2
+study cavern_forg 3 2155 2
+study glacier_forg 3 5280 2
+study hot_tub_forg 5 1414 2
+study building_columns_forg 2 2383 2
+study mall_mem 3 2060 2
+study baseball_field_forg 2 1849 2
+study outdoor_court_mem 4 2155 2
+study stream_forg 5 3552 2
+study restaurant_mem 4 3700 2
+study alleyway_forg 1 2281 2
+study roundabout_mem 2 2160 2
+study brick_building_forg 2 2086 2
+study runway_forg 2 3686 2
+study city_street_forg 3 1619 2
+study japanese_shrine_mem 5 2141 2
+study stone_circle_forg 2 3125 2
+study football_stadium_mem 3 2910 2
+study place_of_worship_forg 3 4533 2
+study flood_forg 1 1336 2
+study fountain_mem 4 3726 2
+study smokestacks_mem 2 2753 2
+study ocean_forg 5 1506 2
+study theater_mem 3 3206 2
+study factory_mem 2 2497 2
+study car_dealership_mem 1 1929 2
+study train_bridge_mem 2 2773 2
+study house_forg 4 2577 2
+study patio_forg 4 3734 2
+test football_stadium_mem 1 2777 2 "footb" 9906 3
+test house_forg 1 6025 2 "none" 1839 2
+test roundabout_forg 2 2590 1 "none" 1102 1
+test deli_forg 2 1492 1 "none" 1395 1
+test fountain_mem 1 1534 1 "fountain" 2266 1
+test canal_forg 1 3880 1 "canal" 3650 1
+test tracks_forg 2 1484 1 "none" 1260 1
+test car_dealership_mem 1 1108 1 "car dealership" 2726 1
+test city_street_mem 2 1943 1 "none" 1315 1
+test flood_forg 1 1935 1 "flood" 1169 1
+test outdoor_court_mem 1 1392 1 "ball court" 1963 2
+test bedroom_mem 1 1316 1 "bedroom" 1997 1
+test stone_circle_forg 1 1260 1 "stone circle" 2340 1
+test building_columns_forg 1 1841 1 "building columns" 5110 1
+test football_stadium_forg 2 1432 1 "none" 906 1
+test mountain_road_forg 2 1288 1 "none" 764 1
+test farmland_mem 1 1779 1 "farmland" 3573 1
+test brick_building_forg 1 1557 1 "brick house" 4279 2
+test sunset_mem 2 1836 1 "none" 948 1
+test ocean_forg 1 2737 1 "ocean" 4494 1
+test cavern_forg 1 2001 1 "cavern" 1621 1
+test ice_mem 2 1143 1 "none" 748 1
+test car_dealership_forg 2 1333 1 "none" 847 1
+test stone_circle_mem 2 1145 2 "none" 5160 1
+test house_mem 2 1264 1 "none" 845 1
+test baseball_field_mem 2 2309 1 "none" 975 1
+test bathroom_forg 2 896 1 "none" 649 1
+test glacier_forg 1 2845 1 "glacier" 2301 1
+test ranch_forg 1 5196 1 "patio" 4953 2
+test flood_mem 2 1680 1 "none" 701 1
+test bedroom_forg 2 1113 1 "none" 686 1
+test bathroom_mem 1 1040 1 "bathroom" 1198 1
+test patio_forg 1 1270 1 "patio" 1024 1
+test river_bridge_mem 1 1876 1 "canal" 5166 2
+test deli_mem 1 1583 1 "deli" 813 1
+test city_street_forg 1 1668 2 "none" 687 2
+test restaurant_forg 2 911 1 "none" 643 1
+test arch_mem 1 797 1 "arch" 764 1
+test stream_mem 2 1090 1 "none" 539 1
+test mall_mem 1 1548 1 "mall" 3901 1
+test theater_mem 1 1163 1 "theater" 2381 1
+test stream_forg 1 2060 1 "creek" 1417 2
+test runway_forg 1 1235 1 "runway" 951 1
+test alleyway_forg 1 1813 1 "place of worship" 5649 2
+test sunset_forg 1 1496 1 "sunset" 1613 1
+test hot_tub_forg 1 1381 1 "hot tub" 936 1
+test japanese_shrine_mem 1 2120 1 "japanese temple" 5835 2
+test forest_forg 1 1278 1 "forest" 1282 1
+test ocean_mem 2 1111 1 "none" 733 1
+test smokestacks_forg 2 1347 1 "none" 629 1
+test train_bridge_mem 1 1811 1 "train bridge" 4835 1
+test glacier_mem 2 1086 1 "none" 590 1
+test smokestacks_mem 1 955 1 "smokestacks" 3031 1
+test ice_forg 1 3791 2 "none" 773 2
+test restaurant_mem 1 1644 1 "restaurant" 1670 1
+test alleyway_mem 2 2927 1 "none" 849 1
+test factory_mem 1 752 1 "factory" 1109 1
+test baseball_field_forg 1 2514 2 "none" 658 2
+test forest_mem 2 1527 1 "none" 618 1
+test roundabout_mem 1 1128 1 "roundabout" 1967 1
+test highway_forg 2 1288 1 "none" 598 1
+test mountain_road_mem 1 1631 1 "freeway" 3645 2
+test building_columns_mem 2 3710 1 "none" 839 1
+test tracks_mem 1 3233 1 "train tracks" 2896 2
+test canal_mem 2 1198 1 "none" 704 1
+test patio_mem 2 1979 1 "none" 732 1
+test place_of_worship_forg 1 1723 1 "place of worship" 2168 1
+test cavern_mem 2 959 1 "none" 616 1
+test farmland_forg 2 997 1 "none" 612 1
+test ranch_mem 2 1113 1 "none" 712 1
+test river_bridge_forg 2 923 1 "none" 615 1
+test factory_forg 2 1006 1 "none" 836 1
+test brick_building_mem 2 3001 1 "none" 954 1
+test mall_forg 2 947 1 "none" 624 1
+test theater_forg 2 895 1 "none" 682 1
+test outdoor_court_forg 2 991 1 "none" 615 1
+test fountain_forg 2 857 1 "none" 683 1
+test hot_tub_mem 2 906 1 "none" 701 1
+test japanese_shrine_forg 2 1010 1 "none" 725 1
+test arch_forg 2 920 1 "none" 717 1
+test place_of_worship_mem 2 827 1 "none" 701 1
+test train_bridge_forg 2 1303 1 "none" 900 1
+test runway_mem 2 875 1 "none" 785 1
+test highway_mem 1 1858 1 "freeway" 6466 2
