@@ -23,6 +23,7 @@ RUN mkdir /home/$USER/templates
 RUN mkdir /home/$USER/outputs
 RUN mkdir /home/$USER/test_files
 RUN mkdir /home/$USER/data
+RUN mkdir /home/$USER/data/experimentaldata
 RUN mkdir /home/$USER/public/grdg
 RUN mkdir /home/$USER/public/grdg/srcs
 
@@ -35,6 +36,7 @@ COPY ./Data/SamplingDistributions_2022.Rmd /home/$USER/demos
 COPY ./Data/SamplingDistributions_2022.html /home/$USER/demos
 COPY ./Data/DataVisualization.Rmd /home/$USER/demos
 COPY ./Data/2020ExpData/*.txt /home/$USER/demos/OnlineExperiment
+COPY ./Data/experimentaldata/*.txt /home/$USER/data/experimentaldata
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
