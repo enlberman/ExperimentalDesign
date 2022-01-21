@@ -37,6 +37,9 @@ COPY ./Data/SamplingDistributions_2022.html /home/$USER/demos
 COPY ./Data/DataVisualization.Rmd /home/$USER/demos
 COPY ./Data/2020ExpData/*.txt /home/$USER/demos/OnlineExperiment
 COPY ./Data/experimentaldata/*.txt /home/$USER/data/experimentaldata
+COPY ./Data/hw2_test.encryptr.bin /home/$USER/test_files/
+COPY ./Data/Homework2_template .Rmd /home/$USER/templates
+
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
