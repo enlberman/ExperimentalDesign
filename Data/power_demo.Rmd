@@ -1,0 +1,240 @@
+---
+title: "Power Calculations"
+author: "Jake Butts"
+date: "1/25/2022"
+output: html_document
+---
+
+# Tutorial Objectives
+
+1. 
+2.. 
+
+--------------------------
+# Set Up
+```{r setup, message=FALSE}
+
+library(tidyverse)
+
+theme_set(theme_minimal())
+
+knitr::opts_chunk$set(message=FALSE)
+
+set.seed(42)  # Get consistent results-- pay attention to this in HW2 for the autograder to work!
+```
+
+#Calculating Power
+Let's work through an example power calculation. Let's imagine an experiment looking at a difference in IQ across 2 groups. Imagine that all values here are from a sample randomly drawn from the broader population. 
+
+We will be calculating "achieved power" (i.e. the power given our n, means, and SDs) for a two sample, two sided t-test.
+
+```{r}
+
+#group1
+g1_n = 10
+g1_sample_mean = 100
+g1_sample_sd = 15
+
+#group2
+g2_n = 10
+g2_sample_mean = 112
+g2_sample_sd = 15
+```
+
+##Power.t.test
+
+Luckily, R makes it very easy to calculate power for a t-test using power.t.test.
+
+All we need is: 
+1.The size of **each** group (n)
+2.The difference in sample means(delta)
+3.Our significance level (typically p< 0.05)
+
+```{r}
+power.t.test(n = 10,
+             delta = g2_sample_mean - g1_sample_mean,
+             sd = 15,
+             sig.level = 0.05,
+             type = "two.sample",
+             alternative = "two.sided")
+```
+
+So with the current set up, our experiment would have a power of 0.394.
+
+##Calculating Power by hand
+
+We can verify this number ourselves, if we wish. At this point, your inner voice is asking, "But why would I ever want to do that?"...
+
+Because doing our calculation by hand gives us more far more flexibility. What if our group sizes are different or, for some reason we have different amounts of noise in the two groups? What if we want to calculate power for something more complicated than a single t-test (more on this later)? By understanding what's going on under the hood we can more easily adapt the code to fit our experiments and research questions.
+
+
+First let's calculate our observed standardized effect size (cohens_d/hedges g).
+
+```{r}
+# In the current example you could simply input 15 as the SDs and group sizes are equal.
+# I've included the formula so that you can play with the values.
+
+df = g1_n + g2_n - 2
+
+weighted_g1_sd_squared = (g1_n - 1) * g1_sample_sd^2
+
+weighted_g2_sd_squared = (g2_n - 1) * g2_sample_sd^2
+
+pooled_sd = sqrt((weighted_g1_sd_squared + weighted_g2_sd_squared) / df)
+
+# Note: technically this is Hedges' g because of how we calculated pooled_sd.
+cohens_d = (g2_sample_mean - g1_sample_mean) / pooled_sd 
+cohens_d
+```
+
+So our effect size is d= 0.8, which is typically considered large. 
+With our observed effect size (0.8), we can now calculate how much power our above experiment has with n = 10. 
+
+**Remember that power is equal to the probability that we will reject the null when it is false (i.e. the probability of making a correct rejection).**
+
+```{r}
+alpha = 0.05
+critical_t = qt(1 - (alpha / 2), df)  
+
+# we use alpha / 2 for a 2 sided test because we are splitting our alpha across the two tails of our distribution. 
+
+ncp = cohens_d * sqrt(g1_n * g2_n / (g1_n + g2_n))
+
+# Although the inner workings of the ncp are beyond the scope of this course, we can think about the ncp as measuring "the degree to which the null hypothesis is false" (Kirk,2012). 
+
+# The important thing to note here is how our sample size influences the ncp. As our sample size grows, our ncp will also grow. 
+
+power = 1 - pt(critical_t, df, ncp)
+power
+```
+
+Our hand calculated power nearly exactly matches what is returned by R.
+
+With n=10 our power is poor. 
+
+We will only detect 39.4% of true effects. 
+
+Said differently, the probability of **rejecting** the null when it is **false** is 39.4% when n=10. 
+
+We can see this visually by looking at the overlap between the null distribution (in red) and the alternative distribution(in blue)
+
+```{r}
+x = seq(-4, 6, length.out = 1000)
+ny = dt(x, df) #null distribution
+ay = dt(x, df, ncp = ncp) #difference in means
+
+data = data.frame(x = x, ny = ny, ay = ay)
+
+ggplot(data, aes(x = x)) +
+  geom_path(aes(y = ny), color='red') +
+  geom_path(aes(y = ay), color='blue') +
+  geom_vline(xintercept = critical_t) +
+  stat_function(fun = dt, 
+                xlim = c(critical_t, 6),
+                geom = "area",
+                args = c(df = df, ncp=ncp),
+                alpha = 0.25) 
+```
+
+Here, the black line shows the cut off for the upper 2.5% of the red distribution. As covered in lecture, anything above that line is unlikely to come from the red distribution, and thus would be detected as an effect. 
+
+The shaded grey area shows that only 39.4% of our alternate distribution falls above that threshold. Everything else, we would fail to detect as a real effect. 
+
+
+
+Let's calculate what our power would be if n = 20 (we will skip doing it by hand as all the calculations are the same).
+
+
+```{r}
+power.t.test(n = 20,
+             delta = g2_sample_mean - g1_sample_mean,
+             sd = 15,
+             sig.level = 0.05,
+             type = "two.sample",
+             alternative = "two.sided")
+```
+
+Looking better... but still lower than our preferred value of 0.8. 
+We could keep guessing what values would be good enough, but the `power.t.test` function allows us to directly calculate the necessary sample size for a specific power value so let's just do that.
+
+#Determining Sample Size
+```{r}
+power.t.test(power = 0.8,  # notice the n argument has been replaced with power
+             delta = g2_sample_mean - g1_sample_mean,
+             sd = 15,
+             sig.level = 0.05,
+             type = "two.sample",
+             alternative = "two.sided")
+
+```
+
+Based on this output, we need 26 people per group to reach a value for power that is >= to 0.8.
+
+One thing you should have noticed is that there is a fair amount of work going into these calculations and, because it is complicated, you may feel as if you want to let the calculator tell you what the right number is and leave it at that. **However, it can be very easy to make mistakes with these methods if you don't understand the internals.**
+
+# Power with Simulations
+One way to gain some confidence in your results is to **perform simulations**. This method scales to much more complicated designs without much more trouble (unlike using gpower or  pre-built functions in R. Here we perform a simulation that provides the same result as the R code we used above. 
+
+To do this, we will calculate the proportion of simulated experiments that result in a correct rejection of the null hypothesis given the effect size, d= 0.8 and n = 10. 
+
+First, we will create a function that generates an "experiment" of data which we can use with `replicate`.
+
+```{r}
+get_sample_data = function(d, n) {
+  data.frame( 
+    group1 = rnorm(n), #generates a normal dist of 10 values centered at 0. 
+    group2 = rnorm(n, d) #generates a normal dist of 10 values centered at d (0.8 in this case).
+  )
+}
+```
+
+The specific values don't matter, we just need two distributions that differ at an **effect size** of 0.8. The easiest way to do this is to simply pull values from N(0,1) and N(0.8,1). Note that a mean difference of 0.8 with sd=1 results in a Cohen's d of 0.8. Performing a t-test with the result of our function is easy.
+
+```{r}
+test_data = get_sample_data(0.8, 10)
+
+test_data
+
+t.test(test_data$group1, test_data$group2)
+```
+
+
+
+
+Here we create a function that runs a t-test and returns `TRUE` if we reject the null (a correct rejection) and `FALSE` if we do not (a miss).
+
+```{r}
+test_sample_data = function(data){
+  t.test(data$group1, data$group2)$p.value < 0.05
+}
+
+test_sample_data(test_data)
+```
+
+As the p-value shown above is above 0.05, our function correctly returns `FALSE`. Now we can use replicate to run our function 1000 times.
+
+```{r}
+simulation_results = replicate(1000, test_sample_data(get_sample_data(0.8, 10)))
+
+glimpse(simulation_results) #taking a peak at what we just did. 
+```
+
+Simulation results now holds 1000 `TRUE` and `FALSE` values. If our simulation worked, we would expect the percentage of `TRUE`s to be close to 0.39 (the output from our work above). R treats `FALSE` as a 0 and `TRUE` as a 1 during numeric calculations so we can simply take the mean of our vector to get our answer.
+
+```{r}
+mean(simulation_results)
+```
+
+Not bad! Let's try again with n=20 now. This time we expect to see approximately 0.69.
+
+```{r}
+mean(replicate(1000, test_sample_data(get_sample_data(0.8, 20))))
+```
+
+#Recap
+
+1. R's "power.t.test" is a useful function for calculating power or determining sample sizes
+2. By looking under the hood at the calculations, we can deepen intuitions for how effect size & sample size influence power. 
+3. Though handy, pre-built functions lack flexibility and can easily lead to errors if you just trust the machine. 
+4. Simulations are a powerful way for performing power analyses that offer greater flexibility to researchers.
+
