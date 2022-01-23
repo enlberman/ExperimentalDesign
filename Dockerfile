@@ -39,6 +39,7 @@ COPY ./Data/2020ExpData/*.txt /home/$USER/demos/OnlineExperiment
 COPY ./Data/experimentaldata/*.txt /home/$USER/data/experimentaldata
 COPY ./Data/hw2_test.encryptr.bin /home/$USER/test_files/
 COPY ./Data/Homework2_template.Rmd /home/$USER/templates
+COPY ./Data/power_demo.Rmd /home/$USER/demos
 
 
 ### we need lib sodium first
