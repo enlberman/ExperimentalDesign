@@ -13,16 +13,6 @@ theme_set(theme_minimal())
 ```
 
 
-Let's look at the first few rows of the data
-```{r}
-head(dataset)
-#Image = identifier of image for trial
-#MemLevel = how memorable the image is (1=low,2=medium,3=high,4=foil)
-#MemCue = memorability cue (1=remember, 2=forget, 3=foil)
-#RT= reaction time in MS
-#Performance = performance (1=correct, 2=incorrect, 3=timeout)
-#Subject
-```
 
 
 # T-tests and Permutation Tests
@@ -294,7 +284,7 @@ quantile(boot_means[2,], probs = c(0.025, 0.975))  # 95% CI for age 3
 
 # Downsampling
 
-In our lab, we use downsampling a lot for understanding the interaction between power and number of trials. In general, we feel that number of trials is an under explored aspect of power. More trials will reduce the error in your estimates, which will reduce your sd's but it is unclear how to determine how many trials you need in an experiement. Usually researchers depend on rules of thumb or use numbers from previous work. Downsampling is a great alternative if you have a large dataset to use.
+Understanding the interaction between power and number of trials. In general, number of trials is an under explored aspect of power. More trials will reduce the error in your estimates, which will reduce your sd's but it is unclear how to determine how many trials you need in an experiement. Usually researchers depend on rules of thumb or use numbers from previous work. Downsampling is a great alternative if you have a large dataset to use.
 
 See here for an example of a project in this vein: https://osf.io/2a4uy/
 
@@ -346,7 +336,7 @@ get_downsample_means = function(data, n){
 For the sake of simplicity, let's just look at the case where we get only 100 trials instead of 1000 (through you can imagine repeating this process over many different values for the number of trials).
 
 ```{r}
-sig_results_100 = replicate(1000, get_downsample_means(data, 100))
+sig_results_100 = replicate(500, get_downsample_means(data, 100))
 
 mean(sig_results_100)
 ```
@@ -354,7 +344,7 @@ mean(sig_results_100)
 Even with only 100 trials, we are still easily detecting the large difference the majority of the time. Let's look at 10 trials for a comparision.
 
 ```{r}
-sig_results_10 = replicate(1000, get_downsample_means(data, 10))
+sig_results_10 = replicate(500, get_downsample_means(data, 10))
 
 mean(sig_results_10)
 ```
