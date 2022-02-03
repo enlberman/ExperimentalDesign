@@ -45,7 +45,7 @@ COPY ./Data/test_data.csv /home/$USER/data
 COPY ./Data/test_data_by_sub.csv /home/$USER/data
 COPY ./Data/test_data_by_sub.csv /home/$USER/data
 COPY ./Data/hw3_test.encryptr.bin /home/$USER/test_files
-COPY ./Data/Homework3_template.Rmd /home/$USER/test_files
+COPY ./Data/Homework3_template.Rmd /home/$USER/templates
 
 
 ### we need lib sodium first
