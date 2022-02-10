@@ -1,0 +1,366 @@
+---
+title: "HW_4_key"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+#you may need to call install.packages to install the packages loading below. 
+library(tidyverse)
+library(dplyr)
+#library(lme4)
+library(lmtest)
+library(corrplot)
+library(stargazer)
+library(ppcor)
+
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw4_test.encryptr.bin'
+
+```
+
+
+## **Part I: Updating our data**
+
+```{r part 1a-c}
+
+#load the data
+
+test_data <- read_csv('/home/expdes/data/test_data_hw3.csv')
+test_data_by_sub <- read_csv('/home/expdes/data/test_data_by_sub_hw3.csv')
+```
+
+
+
+----------------
+
+
+## **Part II: Simple Linear Regression **
+
+
+Q2:
+```{r question 2}
+
+
+```
+
+```{r gradeQ2}
+passed <- grade_my_hw("2", test_file_path, loc)
+show_grade(passed, "2")
+```
+
+
+Q3:
+```{r  question 3}
+
+
+```
+
+```{r gradeQ3}
+passed <- grade_my_hw("3", test_file_path, loc)
+show_grade(passed, "3")
+```
+
+
+---------
+
+Write your linear function here:
+
+
+---------
+
+
+4.	
+---------
+Written Response here. 
+
+
+---------
+
+5.
+```{r part 2, question 5}
+
+
+```
+
+
+
+--------
+Written Response here. 
+
+
+
+
+---------
+7.
+```{r part 2, question 6}
+
+
+
+```
+
+```{r gradeQ7}
+passed <- grade_my_hw("7", test_file_path, loc)
+show_grade(passed, "7")
+```
+
+---------
+
+Written Response here. 
+
+
+-----------------------
+
+Part III: Multiple Regression
+
+
+8.
+```{r part 3, question 8}
+
+
+```
+
+```{r gradeQ8}
+passed <- grade_my_hw("8", test_file_path, loc)
+show_grade(passed, "8")
+```
+
+
+
+9.
+```{r part 3, question 9}
+
+```
+
+```{r gradeQ9}
+passed <- grade_my_hw("9", test_file_path, loc)
+show_grade(passed, "9")
+```
+
+
+10.	Report the best fit plane function. 1 point
+
+---------
+Written Response here. 
+
+
+--------
+
+11a.
+```{r part 3, question 11a}
+
+```
+
+```{r gradeQ11a}
+passed <- grade_my_hw("11.1", test_file_path, loc)
+show_grade(passed, "11.1")
+```
+
+
+11b.	
+```{r part 3, question 11b}
+
+
+```
+
+```{r gradeQ11b}
+passed <- grade_my_hw("11.2", test_file_path, loc)
+show_grade(passed, "11.2")
+```
+
+11c.
+
+```{r part 3, question 11c}
+
+```
+
+```{r gradeQ11c}
+passed <- grade_my_hw("11.3", test_file_path, loc)
+show_grade(passed, "11.3")
+```
+
+
+12.
+
+---------
+Written Response here. 
+
+
+--------
+
+13.	
+
+Before answering a-c, calculate the reduced SSR for mem_score and memory_rt
+```{r part 3, question 13}
+
+
+```
+
+
+a.Now get the UNIQUE SSR for mem_score: 
+```{r}
+
+
+```
+
+```{r gradeQ13a}
+passed <- grade_my_hw("13.1", test_file_path, loc)
+show_grade(passed, "13.1")
+```
+
+
+b. Unique SSR for memory recognition confidence (i.e. reaction-time):
+```{r}
+
+
+```
+
+```{r gradeQ13b}
+passed <- grade_my_hw("13.2", test_file_path, loc)
+show_grade(passed, "13.2")
+```
+
+
+c.	How much of the SSR is shared between these two factors?
+
+```{r part 3, question 13c}
+
+```
+
+```{r gradeQ13c}
+passed <- grade_my_hw("13.3", test_file_path, loc)
+show_grade(passed, "13.3")
+```
+
+
+
+14a.
+
+```{r part 3, question 14a}
+
+```
+
+```{r gradeQ14a}
+passed <- grade_my_hw("14.1", test_file_path, loc)
+show_grade(passed, "14.1")
+```
+
+
+
+14b.
+
+```{r part 3, question 14b}
+
+```
+
+
+```{r gradeQ14b}
+passed <- grade_my_hw("14.2", test_file_path, loc)
+show_grade(passed, "14.2")
+```
+
+
+14b.i.	Briefly discuss how the relationship between R2 and Adjusted R2 here related to the ideal number of predictors in the model.
+
+---------
+Written Response here. 
+
+
+--------
+
+14c.	
+
+```{r part 3, question 14c}
+
+
+```
+
+
+```{r gradeQ14c}
+passed <- grade_my_hw("14.3", test_file_path, loc)
+show_grade(passed, "14.3")
+```
+
+14d.	
+
+```{r part 3, question 14d}
+
+
+```
+
+
+```{r gradeQ14d}
+passed <- grade_my_hw("14.5", test_file_path, loc)
+show_grade(passed, "14.5")
+```
+
+
+15.	Calculate these metrics using built-in R functions and compare. Additionally, calculate t-statistics and corresponding p-values for each predictor using built-in R functions. 2 points
+
+```{r part 3, question 15}
+
+```
+
+```{r gradeQ15}
+passed <- grade_my_hw("15", test_file_path, loc)
+show_grade(passed, "15")
+```
+
+
+16.	Report all of the calculated information from the multiple regression as if reporting in a research paper. 1 point
+---------
+Written Response here. 
+
+
+--------
+
+17.	Briefly discuss: Name and describe at least 2 changes that could be incorporated to improve this regression model. 1 point
+---------
+Written Response here. 
+
+
+--------
+
+18.	Re-run the model with at least 1 of these changes.
+
+```{r part 3, question 18}
+
+```
+
+
+a.	Report what you changed. 1 point
+---------
+Written Response here. 
+
+
+--------
+b.	Report the best fit plane function. 1 point
+---------
+Written Response here. 
+
+
+--------
+c.	Calculate (using built-in functions is fine) adjusted R2, the F-statistic for the model and its corresponding p-value, and the t-statistics for each predictor and their p-values.  3 points
+```{r part 3, question 18c}
+
+```
+
+d.	Report these metrics as if reporting in a research paper. 1 point
+---------
+Written Response here. 
+
+
+--------
+e.	Briefly discuss: How did your change(s) impact the explained variance of each predictor? 1 point
+---------
+Written Response here. 
+
+
+--------
