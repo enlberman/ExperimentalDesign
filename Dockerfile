@@ -49,6 +49,7 @@ COPY ./Data/MultipleComparisonCorrections_2022.Rmd /home/$USER/demos
 COPY ./Data/Study1_ParkEntryAvgs.csv /home/$USER/demos
 COPY ./Data/test_data_hw3.csv /home/$USER/data
 COPY ./Data/test_data_by_sub_hw3.csv /home/$USER/data
+COPY ./Data/imidtomemorabilityscore.csv /home/$USER/data
 COPY ./Data/hw4_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/HW4_template.Rmd /home/$USER/templates
 
