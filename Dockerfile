@@ -92,8 +92,9 @@ RUN apt-get update \
     xdg-utils \
   && rm -rf /var/lib/apt/lists/*
   
-  
-RUN apt-get install cmake
+RUN apt-get -y update && apt-get install -y \ 
+r-cran-nloptr \
+cmake
   
 ## install required R libraries
 RUN Rscript /tmp/requirements.R
