@@ -1,4 +1,4 @@
-library(car)install.packages(c("janitor", "feather", "patchwork","glmnet","stargazer","corrplot","ggpubr","testthat","sodium","DiagrammeR","rmarkdown", "knitr","markdown","Hmisc"))
+install.packages(c("janitor", "feather", "patchwork","glmnet","stargazer","corrplot","ggpubr","testthat","sodium","DiagrammeR","rmarkdown", "knitr","markdown","Hmisc"))
 install.packages("rmarkdown", version = "2.11")
 tinytex::install_tinytex()
 
