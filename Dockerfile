@@ -53,6 +53,11 @@ COPY ./Data/imidtomemorabilityscore.csv /home/$USER/data
 COPY ./Data/hw4_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/HW4_template.Rmd /home/$USER/templates
 COPY ./Data/ChiSquare_F_Dists.Rmd /home/$USER/demos
+COPY ./Data/BestFitLines_demo_2022.Rmd /home/$USER/demos
+COPY ./Data/RegressionData1.csv /home/$USER/demos
+COPY ./Data/RegressionImageData.csv /home/$USER/demos
+COPY ./Data/Regression_demo_2022.Rmd /home/$USER/demos
+COPY ./Data/cor.mtest.R /home/$USER/demos
 
 
 ### we need lib sodium first
