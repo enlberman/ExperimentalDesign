@@ -93,6 +93,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
   
   
+RUN apt-get install cmake
+  
 ## install required R libraries
 RUN Rscript /tmp/requirements.R
 
