@@ -1,0 +1,139 @@
+---
+title: "Homework 5"
+author: "Andrew Stier"  
+date: "`r Sys.time()`"
+output: html_document
+---
+
+<!---
+In order to check that all the necessary packages are installed, Click the File > New File > R Markdown button and keep all of the options as is. Save the document somewhere, and, while that new document is open, click the knit button. If a window with some plots shows up, everything is installed correctly. If RStudio prompts you to install any packages, you should install them.
+-->
+
+<!---
+Please save this file as Homework5_lastname_firstname.Rmd
+
+Be sure to update the author field in the block above.
+
+While you are working on your homework, you can use the green arrows to run a "chunk" of code. In order to produce the final document, use the knit button. You will turn in both the Rmd file and the knitted html file, which will appear next to wherever you saved the Rmd file if there are no errors.
+
+Beware, if you run chunks out of order or reuse variable names your code may produce different results when it is run again from top to bottom. Before you knit your document, it is a good idea to run all the chunks in order from top to bottom in a clean environment. Use the broom button in the environment pane to clear your variables and click the Session > Restart R and Run All Chunks.
+
+If you ever want to reference the documentation about a function, go to the console below and type ?function_name. Try it now with ?read_csv.
+-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse)  # loads many useful packages
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw5_test.encryptr.bin'
+
+```
+
+```{r Q1}
+#load the data
+test_data <- read_csv('/home/expdes/data/by_image_rt_hw4.csv')
+test_data <- test_data %>% rowwise() %>% mutate(word_length = str_length(stim_name_clean)) %>% ungroup()
+```
+
+
+```{r Q2}
+
+```
+
+```{r gradeQ2}
+passed <- grade_my_hw("2", test_file_path, loc)
+show_grade(passed, "2")
+```
+
+
+```{r Q3}
+
+```
+Describe. 
+
+
+```{r Q4 a-d}
+
+```
+
+```{r gradeQ4a-d}
+
+```
+
+```{r Q4 e}
+
+
+```
+
+
+```{r Q4 f}
+
+```
+
+```{r gradeQ4f}
+passed <- grade_my_hw("4.6", test_file_path, loc)
+show_grade(passed, "4.6")
+```
+
+4.g
+
+
+```{r 5}
+
+```
+
+5.a
+
+```{r gradeQ5}
+passed <- grade_my_hw("5", test_file_path, loc)
+show_grade(passed, "5")
+```
+
+
+6.a
+
+We should probably keep mem_level balanced
+
+```{r 6 b-d}
+
+```
+
+```{r grade Q6b-d}
+passed <- grade_my_hw("6.2", test_file_path, loc)
+show_grade(passed, "6.2")
+```
+
+```{r 6 e}
+
+```
+
+```{r 6 f}
+
+```
+
+
+```{r grade Q6f}
+passed <- grade_my_hw("6.6", test_file_path, loc)
+show_grade(passed, "6.6")
+```
+
+6.e
+
+7.
+
+8.
+
+a.
+
+b.
+
+c.
+
+d.
