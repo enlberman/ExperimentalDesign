@@ -1,0 +1,369 @@
+---
+title: "Cross Validation"
+author: "Jake Butts"
+date: "2/23/2022"
+output: html_document
+---
+
+```{r message=FALSE}
+library(tidyverse)
+
+set.seed(1)
+
+theme_set(theme_minimal())
+```
+
+# Creating a Validation Set
+
+We will be using the `iris` dataset to illustrate cross-validation methods. This data set is  pre-loaded into R. Type ?iris in the chunk below to learn more about this dataset!
+
+
+```{r}
+# an id makes it easier to check your operations
+iris = iris %>% mutate(id = row_number()) 
+
+#%>% select(id, everything())
+
+head(iris)
+```
+
+
+Let's imagine that we want to test a model which seeks to predict Sepal Length using some of the other variables found in this data set. 
+
+The simplest method for creating a validation set is just to randomly sample a fraction (using sample_fract) of the data to hold out for testing our model. 
+
+We can then make use of "setdiff" to isolate our training subset from the validation subset once we know what rows are in the validation set.
+
+```{r message=FALSE}
+
+#Randomly sample from iris dataset 20% of cases (i.e. rows)
+holdout_random = iris %>% 
+  sample_frac(0.2)
+
+head(holdout_random)
+
+# Creates the 80% of rows not found in holdout_random
+train_random = setdiff(iris, holdout_random)
+
+head(train_random)
+
+
+# We can verify that the two fractions of our data are unique from one another using an inner join. Unlike a left join which matches values in the "right" (i.e. second) df to those on the left (i.e. first), inner join extracts cases that are found in BOTH data frames. Here, we'd expect the inner_join to return no cases since we want our two subsets to contain different pieces of the iris dataframe.
+
+inner_join(holdout_random, train_random, by="id")
+```
+Indeed, this method works for randomly splitting up the data into two distinct subsets: one for training our model and one for validating/testing. 
+
+However, randomly splitting the data may cause problems if you want to make sure you are keeping the correct amounts of certain conditions. 
+
+
+QUESTIONS: 
+
+
+1.Why might randomly splitting the data cause problems in the iris data set? Can you think of any features/conditions we would want to distribute evenly between our subsets of the data? 
+
+
+2.Are there any features in our by image data we would want to ballance between our training and validation sets? 
+
+
+
+
+
+
+
+
+
+We can make sure our train and validation sets have equal distributions of species by using group_by.
+
+```{r message=FALSE}
+holdout_grouped = iris %>% 
+  group_by(Species) %>% #ensures equal proportions of each species in each subset
+  sample_frac(0.2)
+
+train_grouped = setdiff(iris, holdout_grouped)
+
+count(holdout_grouped, Species)
+count(train_grouped, Species)
+```
+
+How you create your validation set is very important if there is any time information in your data (even if you aren't actively using that data to model!). 
+
+
+A quick aside that you won't need for the HW, but you might need for your data... 
+
+In the iris data set there are 3 species of plants. Let's imagine for a moment that this data is a repeated measuring of individual exemplars of each species (it's not, but just go with it). So that would mean that we had one setosa, one versicolor, and one virgincia plant that we took measurements from at 50 time-points across their development.
+
+In that case we might expect our data to be time-dependent (things tend to bigger over time). 
+
+If you have a reason to believe that data is dependent over time you should usually use the last rows within each group as your validation set. 
+
+
+Here is an example of how to do that.
+
+```{r message = FALSE}
+holdout_timeseries = iris %>% 
+  group_by(Species) %>% 
+  top_frac(0.2, wt = id) #specifies to take the top 20% of ids for each species
+
+train_timeseries = setdiff(iris, holdout_timeseries)
+
+head(holdout_timeseries)
+```
+
+# Fitting a Model and Getting Predictions
+
+From here on out we will be using the holdout data which matched the number of each species. We will start by fitting a linear model to predict sepal length from sepal width, petal length, petal width, and species. 
+
+```{r}
+fit = lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width + Species, data = train_grouped)
+
+summary(fit)
+```
+
+As we can see, our model seems to fit well on our training data, with an adjusted R squared of 0.85. Let's check the residuals.
+
+```{r}
+plot(residuals(fit))
+
+#remember this just says to take our model named "fit" and calculate and plot the residuals
+```
+
+Everything seems to look normal here, so now we should check to see if we get similar performance on our validation set. 
+
+To do this, we will use root mean squared error (rmse) as it is a quick way to compare performance. 
+
+To get rmse for our validation set, we need to use our model to make predictions on it, using the `predict` function.
+
+```{r}
+(train_rmse = sqrt(mean(residuals(fit)^2))) 
+#gets the rmse for our training set (the one we used to make our model)
+
+predictions = predict(fit, holdout_grouped) 
+#uses our models betas to predict sepal length (DV) for the validation set based on our IVs (sepal width, petal length, petal width, and species)
+
+valid_residuals = holdout_grouped$Sepal.Length - predictions 
+#calculates residuals of our predicted sepal lengths vs. our observed sepal lengths
+
+(valid_rmse = sqrt(mean(valid_residuals^2))) 
+#gets our rmse for our validation set
+```
+
+Performance as measured by our rmse is very similar, suggesting that we are just as predictive on our validation data as we are on our training data.
+
+In order to generate a correlation between the predicted values and the actual values, we will use the `cor` function.
+
+```{r}
+cor(predictions, holdout_grouped$Sepal.Length)
+```
+
+Because this R value is close to 1, we conclude there is a good fit for the holdout data. Our model's predictions for the validation data are strongly associated with the actual values of sepal length. 
+
+
+As discussed, we probably don't just want to rely on a single split of the data though. So let's build a function that we can then use to many iterations over the splits.This will be quite useful for the HW. 
+
+```{r}
+
+get_cor <- function(test_fraction){
+  holdout <- iris %>%
+  sample_frac(test_fraction)
+  train = setdiff(iris, holdout)
+  
+  fit = lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width + Species, data = train)
+  return(cor(holdout$Sepal.Length,predict.lm(fit,holdout)))
+}
+
+#So far the above is nothing new, we've taken indepdent lines of code and wrapped them in a function which takes as it's input the fraction you want to hold out to test and results a correlation between the predicted DV on your test set vs the observed. 
+
+# to get 1000 iterations of this, we need to use replicate. But any time we are generating random samples it is a good idea to set our seed. 
+
+set.seed(1995)
+cors <- replicate(1000, get_cor(0.2))
+
+#Let's plot these correlations to see their distribution
+
+data.frame(cors) %>% ggplot() + aes(x=cors) + geom_histogram(bins=40)
+mean_cor <- mean(cors)
+mean_cor
+
+
+# Let's test our correlations against the null of cor=0 using a t test. 
+#If the correlations are significantly higher than 0, that means our model transfers well. 
+
+cors_z <- atan(cors) 
+#atan is the fisher's z transformation we use bc r is bounded between -1 and 1.
+cors_t_test <- t.test(cors_z)
+cors_t_test
+
+```
+
+So overall, we see a most of our r values are .9 and above, suggesting our model built on training data fits our test data quite well! Indeed, our t-test returns a p value less than 0.05 meaning we reject the null that the true mean is equal to 0.
+
+
+# K-fold Cross Validation
+
+A more computationally efficient approach is to use K folds. Instead of needing 1000 iterations, we can equally partition our data into folds and run fewer iterations
+
+To do this, we will setup a column defining folds and then randomize it within species.
+
+```{r}
+iris_folded_1 = iris %>% 
+  arrange(Species) %>% # necessary to get the right number of folds within each group- stratified
+  mutate(fold = rep(1:5, 30))  # creates a fold column and fills it with 1-5 repeated 30x
+
+head(iris_folded_1) #at this point the folds have not been randomized
+
+iris_folded_2<-iris_folded_1%>%
+  group_by(Species) %>%  # Keep the folds balanced across species
+  mutate(fold = sample(fold)) # randomize the fold column
+
+head(iris_folded_2) 
+
+#now we have 5 randomized folds, each with 30 total cases, 10 per species
+
+count(iris_folded_2, Species, fold)
+
+```
+
+Now, for each fold we will create a model and print out the R value for the correlation between predicted and actual values.
+
+```{r}
+cors = numeric()
+
+for (fold_number in 1:5) {
+  train = iris_folded %>% filter(fold != fold_number) #training set is all folds but the current #
+  valid = iris_folded %>% filter(fold == fold_number) # validation set is the current fold #
+  
+  folded_model = lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width + Species, data = train) #same model as before, just giving a new name
+  
+  folded_predictions = predict(folded_model, valid)
+  
+  r = cor(folded_predictions, valid$Sepal.Length)
+  cors = append(cors, r)
+}
+
+cors
+
+mean(cors)
+
+#Notice that with K folds we do not need to call replicate because the folds are doing that iterative process for us. 
+```
+
+While there is some random noise, we can see that in general our mean R value is around 0.92.
+
+
+
+# Underfitting and Overfitting
+
+In order to explore the concepts of underfitting and overfitting, we will generate a toy dataset. To generate a moderately complex function, we will have a dependent variable `y` be predicted by an exponential relationship with one independent variable and a linear relationship with another. We can then explore how different types of models fit to this data. While we are adding complexity by using a higher degree polynomial, it's important to understand that these concepts hold for model complexity generally, which includes models with a large number of factors.
+
+```{r}
+# Simulating data with y = b1^2 + b2 + error, note that our train and holdout come from same distributions.
+
+b1 = rnorm(1000)
+b2 = rnorm(1000)
+error = rnorm(1000)
+
+holdout_b1 = rnorm(1000)
+holdout_b2 = rnorm(1000)
+holdout_error = rnorm(1000)
+
+y = b1^2 + b2 + error #getting our "observed" y values for training
+holdout_y = holdout_b1^2 + holdout_b2 + holdout_error #getting our "observed" y values for validation
+
+data = data.frame(y=y, b1=b1, b2=b2) #df of our training data
+holdout_data = data.frame(y=holdout_y, b1=holdout_b1, b2=holdout_b2) #df of our holdout
+
+head(data)
+```
+
+First, let's plot the data.
+
+```{r}
+ggplot(data, aes(x = b1, y = y, color = b2)) +
+  geom_point()
+```
+
+As you can see, there is an exponential relationship between b1 and y as well as a linear relationship between b2 and y (pay attention to the color of the points:darker= lower). Now we will create a purely linear model that will under-fit to the patterns in our data.
+
+```{r}
+fit.1 = lm(y ~ b1 + b2, data=data)
+
+summary(fit.1)
+
+(rmse_1 = sqrt(mean(fit.1$residuals^2)))
+```
+
+Our model is significant overall, but we know that it is not able to use the information contained in our b1 (non-linear relationship to y) factor. Let's plot our residuals for the above model.
+
+
+
+
+```{r}
+plot(residuals(fit.1))
+```
+
+Clearly, our model is not able to pick up on the relationship between b1 and y. You can see this in the residuals plot. We expect our error to be normally distributed noise around 0, but instead we see a number of highly positive residuals with no highly negative residuals. 
+
+Let's calculate the rmse of our holdout set using this model. 
+
+```{r}
+holdout_1_residuals = holdout_y - predict(fit.1, holdout_data)
+
+(rmse_1_holdout = sqrt(mean(holdout_1_residuals^2)))
+```
+
+Here we are looking at the rmse of our model for simplicity, but this logic can work for any metric you want to use. The rmse on our training set was `r round(rmse_1, digits = 3)`, and `r round(rmse_1_holdout, digits = 3)` on our validation set. Just looking at rmse, it can be hard to tell whether your model is underfitting or overfitting. Here the two values are very close. 
+
+This is why it's important to also look at your residuals for any patterns.
+
+Now we will create a 15th degree polynomial model which will over-fit to our data. 
+
+```{r}
+fit.2 = lm(y ~ poly(b1, 15) + b2, data=data)
+
+summary(fit.2)
+
+(rmse_2 = sqrt(mean(fit.2$residuals^2)))
+```
+
+```{r}
+plot(residuals(fit.2))
+```
+
+Here our residual plot looks good, but we need to check our error on our holdout data to look for overfitting. Our training set had an rmse of `r round(rmse_2, digits = 3)` which is obviously much better than our underfit model. Let's calculate rmse on our holdout data.
+
+```{r}
+holdout_2_residuals = holdout_y - predict(fit.2, holdout_data)
+
+(rmse_2_holdout = sqrt(mean(holdout_2_residuals^2)))
+```
+
+As we can see, the holdout rmse is considerably higher than the rmse on the training set, which suggests there is probably overfitting to our traiing data. Just because you have normal residuals and low error, does not mean that your model is useful for making predictions on new data!
+
+Finally, we will create a model with only a second degree polynomial to see what a good fit looks like.
+
+```{r}
+fit.3 = lm(y ~ poly(b1, 2) + b2, data=data)
+
+summary(fit.3)
+
+(rmse_3 = sqrt(mean(fit.3$residuals^2)))
+```
+
+```{r}
+plot(residuals(fit.3))
+```
+
+We get a similar rmse on our training set, which makes sense as the more complex model would have a hard time fitting better to the random noise that was left over after the main effects were regressed out. Once again, our residuals look as we would expect with a good fit.
+
+```{r}
+holdout_3_residuals = holdout_y - predict(fit.3, holdout_data)
+
+(rmse_3_holdout = sqrt(mean(holdout_3_residuals^2)))
+```
+
+Now, we can see that the rmse on our holdout set is much closer to the rmse on our training set, which means we have a better fit. It will usually be the case with more complicated models that you will have slightly worse performance on your validation set as it is usually impossible to completely avoid fitting to noise. It's up to you to determine what level of performance you think you can get out of your model.
+
+Note: If you are going to be doing a lot of model testing and adjusting in order to create the best possible model (which I encourage), you should probably have 3 datasets: a training dataset, a validation dataset, and a test dataset. You can follow all the processes for creating your model using your train and valid datasets, but when you are done you should also report the accuracy on your test dataset. This is useful to make sure you haven't accidentally over-fit to your validation set by making decisions that improve validation accuracy by chance.
+
+
