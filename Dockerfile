@@ -61,7 +61,7 @@ COPY ./Data/cor.mtest.R /home/$USER/demos
 COPY ./Data/by_image_rt_hw4.csv /home/$USER/data
 COPY ./Data/hw5_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/Homework5_template.Rmd /home/$USER/templates
-
+COPY ./Data/cross_validation_jb.Rmd /home/$USER/demos
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
