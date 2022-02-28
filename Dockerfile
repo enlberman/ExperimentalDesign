@@ -63,6 +63,14 @@ COPY ./Data/hw5_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/Homework5_template.Rmd /home/$USER/templates
 COPY ./Data/cross_validation_jb.Rmd /home/$USER/demos
 
+
+#### install stan stuff
+RUN \
+    add-apt-repository ppa:marutter/rrutter4.0 && \
+    add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
+    apt-get update && \
+    apt-get install r-cran-rstan
+
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
 RUN \
