@@ -1,3 +1,5 @@
+install.packages("cmdstanr", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+
 install.packages(c("janitor", "feather", "patchwork","glmnet","stargazer","corrplot","ggpubr","testthat","sodium","DiagrammeR","rmarkdown", "knitr","markdown","Hmisc"))
 install.packages("rmarkdown", version = "2.11")
 tinytex::install_tinytex()
