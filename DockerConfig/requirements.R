@@ -4,3 +4,4 @@ tinytex::install_tinytex()
 
 install.packages(c( "car", "lme4", "lmtest", "ppcor"))
 install.packages(c("sjPlot","sjmisc", "glmmTMB"))
+install.packages(c("rethinking","dagitty","CCA"))
