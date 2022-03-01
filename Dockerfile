@@ -72,9 +72,11 @@ RUN apt-get update && \
     
 RUN  \
     add-apt-repository ppa:marutter/rrutter4.0 && \
-    add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
-    yes | apt-get update && \
-    apt-get install r-cran-rstan
+    add-apt-repository ppa:c2d4u.team/c2d4u4.0+
+    
+RUN yes | apt-get update
+
+RUN apt-get install r-cran-rstan
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
