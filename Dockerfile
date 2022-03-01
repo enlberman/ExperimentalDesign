@@ -64,7 +64,12 @@ COPY ./Data/Homework5_template.Rmd /home/$USER/templates
 COPY ./Data/cross_validation_jb.Rmd /home/$USER/demos
 
 
+
 #### install stan stuff
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    rm -rf /var/lib/apt/lists/*
+    
 RUN \
     add-apt-repository ppa:marutter/rrutter4.0 && \
     add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
