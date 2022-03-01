@@ -64,7 +64,8 @@ Describe.
 ```
 
 ```{r gradeQ4a-d}
-
+passed <- grade_my_hw("4.1", test_file_path, loc)
+show_grade(passed, "4.1")
 ```
 
 ```{r Q4 e}
