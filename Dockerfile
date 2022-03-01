@@ -70,7 +70,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     rm -rf /var/lib/apt/lists/*
     
-RUN \
+RUN yes | \
     add-apt-repository ppa:marutter/rrutter4.0 && \
     add-apt-repository ppa:c2d4u.team/c2d4u4.0+ && \
     apt-get update && \
