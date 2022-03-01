@@ -76,7 +76,7 @@ RUN  \
     
 RUN yes | apt-get update
 
-RUN apt-get install r-cran-rstan
+RUN yes | apt-get install r-cran-rstan
 
 ### we need lib sodium first
 # Install some tools: gcc build tools, unzip, etc
