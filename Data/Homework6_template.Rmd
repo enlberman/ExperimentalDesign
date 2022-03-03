@@ -1,0 +1,128 @@
+---
+title: "Homework 6"
+author: "Andrew Stier"  
+date: "`r Sys.time()`"
+output: html_document
+---
+
+<!---
+In order to check that all the necessary packages are installed, Click the File > New File > R Markdown button and keep all of the options as is. Save the document somewhere, and, while that new document is open, click the knit button. If a window with some plots shows up, everything is installed correctly. If RStudio prompts you to install any packages, you should install them.
+-->
+
+<!---
+Please save this file as Homework6_lastname_firstname.Rmd
+
+Be sure to update the author field in the block above.
+
+While you are working on your homework, you can use the green arrows to run a "chunk" of code. In order to produce the final document, use the knit button. You will turn in both the Rmd file and the knitted html file, which will appear next to wherever you saved the Rmd file if there are no errors.
+
+Beware, if you run chunks out of order or reuse variable names your code may produce different results when it is run again from top to bottom. Before you knit your document, it is a good idea to run all the chunks in order from top to bottom in a clean environment. Use the broom button in the environment pane to clear your variables and click the Session > Restart R and Run All Chunks.
+
+If you ever want to reference the documentation about a function, go to the console below and type ?function_name. Try it now with ?read_csv.
+-->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse)  # loads many useful packages
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw6_test.encryptr.bin'
+
+```
+
+```{r Q1}
+#load the data
+test_data_by_sub <- read_csv('/home/expdes/data/test_data_by_sub_hw3.csv')
+```
+
+
+```{r Q2}
+
+```
+
+```{r gradeQ2}
+passed <- grade_my_hw("2", test_file_path, loc)
+show_grade(passed, "2")
+```
+
+
+```{r Q3}
+
+```
+
+|  | sum sq | df | mean sq | F | p |
+| --- | --- | --- | --- | --- | --- |
+| Task | `r SS_task` | `r df_task` | `r MS_task` | `r F_task` | `r p_task` |
+| MemLevel | `r SS_memlevel` | `r df_memlevel` | `r MS_memlevel` | `r F_memlevel` | `r p_memlevel` |
+| Task:MemLevel | `r SS_interaction` | `r df_interaction` | `r MS_interaction` | `r F_interaction` | `r p_interaction` |
+| Residuals (Within) | `r SS_within` | `r df_within` | `r MS_within` |  |  |
+| Total | `r SS_total` | `r df_total` |  |  |  |
+
+Describe. 
+
+```{r gradeQ3}
+passed <- grade_my_hw("3", test_file_path, loc)
+show_grade(passed, "3")
+```
+
+```{r Q4}
+
+```
+
+```{r Q5}
+
+```
+
+```{r gradeQ5}
+passed <- grade_my_hw("5", test_file_path, loc)
+show_grade(passed, "5")
+```
+
+6. Describe
+
+```{r Q7}
+
+```
+
+
+```{r gradeQ7}
+passed <- grade_my_hw("7", test_file_path, loc)
+show_grade(passed, "7")
+```
+
+```{r Q8}
+
+```
+
+```{r gradeQ8}
+passed <- grade_my_hw("8", test_file_path, loc)
+show_grade(passed, "8")
+```
+
+8.a
+
+9.
+
+accuracy ~ Intercept + taskWord + taskImage + mem_levelMem + taskWord:MemLevel2Mem + taskImage:MemLevelMem
+
+```{r Q10}
+
+```
+
+
+```{r gradeQ10}
+passed <- grade_my_hw("10", test_file_path, loc)
+show_grade(passed, "10")
+```
+
+10.How do the outputs compare?
+
+11.
+
+12.
