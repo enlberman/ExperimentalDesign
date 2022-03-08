@@ -1,0 +1,164 @@
+---
+title: "Useful R packages"
+author: "Jake Butts"
+date: "3/11/2022"
+output: html_document
+---
+
+```{r message=F}
+library(tidyverse)
+
+theme_set(theme_minimal())
+
+set.seed(1)
+
+knitr::opts_chunk$set(message=F)
+```
+
+```{r}
+library(janitor)
+
+colnames(iris)
+
+#clean_names parses letter cases and separators to a consistent format (snake_format is default, but can be modified)
+
+colnames(janitor::clean_names(iris))
+```
+
+```{r}
+library(stringr)
+
+#lets create some number strings
+strings <- c(" 219 733 8965",
+             "329-293-8753 ",
+             "banana",
+             "595 794 7569",
+             "387 287 6718", "233.398.9187  ",
+             "482 952 3315",
+             "239 923 8115 and 842 566 4692",
+             "Work: 579-499-7527",
+             "$1000",
+             "Home: 543.355.3679")
+
+#we can then define pattern(s) for what a phone number looks like: 
+
+phone_pattern <- "([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})"
+
+#str_extract will clean and pull values that fit this pattern, and return other values as NA. 
+str_extract(strings, phone_pattern)
+```
+
+```{r}
+#lubridate is incredibly useful for parsing and extracting information from date information. 
+
+library(lubridate)
+
+my_date = ymd(20200529) #ymd is just one of the patterns lubridate will accept. 
+my_date_2= mdy(05292020)
+
+my_date
+my_date_2
+
+#whatever format you specifiy, lubirdate will parse and return in Year-Month-Day. 
+
+month(my_date) #we can pull specific components of our date
+
+leap_year(my_date) #we can find out if its a leap year or not.
+```
+
+```{r}
+#forcats is a great package for those of us who often work with catagorical data/variables. 
+
+library(forcats)
+
+fav_colors = sample(colors(), 25) #sample 25 colors from r's color pallete
+counts = round(runif(25, 5, 100)) #get 25 rounded numbers from a uniform distribution between 5 and 100, call these counts
+
+cols = data.frame(fav_colors, counts) #make df with above values
+
+#let's plot
+ggplot(cols, aes(x = fav_colors, y = counts)) +
+  geom_col() +
+  coord_flip()
+```
+ Pretty messy. Luckly, forcats gives us an easy way to reorder our factors so we can better visualize potential patterns/relations between catagories. 
+
+```{r}
+
+cols = cols %>% 
+  mutate(fav_colors = fct_reorder(fav_colors, counts, max))
+
+ggplot(cols, aes(x = fav_colors, y = counts)) +
+  geom_col() +
+  coord_flip()
+```
+
+
+purrr package has lots of useful tools, but one is the ability to nest data and perform functions on each of the nested groups seperately. 
+
+```{r}
+library(purrr)
+
+iris_nested = iris %>% 
+  group_by(Species) %>% 
+  nest()
+
+iris_nested
+
+models = iris_nested %>% 
+  mutate(model = lapply(data, function(df) {summary(lm(Petal.Length ~ Petal.Width, data = df))}),
+         r_2 = model$r.squared)
+
+models
+```
+Modelr lets you seamlessly add predictions and residuals as additional columns to an existing data frame
+```{r}
+
+library(modelr)
+
+fit = lm(Petal.Length ~ Petal.Width + Sepal.Length + Species, data=iris)
+
+iris = iris %>% 
+  add_predictions(fit)
+
+head(iris)
+```
+We've worked with data frames frequently in the course, but data.table is a powerful package that provides greater flexibility in creating, subsetting, and manipulatiing your data. 
+```{r}
+library(data.table)
+
+#lets make the df iris a data.table
+iris_dt = data.table(iris) 
+
+#now we can use the data.table syntax to select a subset of the species column and compute the mean of the petal length column for just that subset of the species. 
+
+iris_dt[Species == "setosa", .(Petal.Length = mean(Petal.Length))]
+```
+#patchwork lets you add ggplot plots together in a sensible layout
+```{r}
+library(patchwork)
+
+p1 = ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) +
+  geom_point()
+
+p2 = ggplot(iris, aes(x = Species, y = Petal.Length, fill=Species)) +
+  stat_summary(geom="bar") +
+  stat_summary(geom="errorbar", width = 0.2) +
+  guides(fill=FALSE)
+
+p3 = ggplot(iris, aes(x = Species, y = Petal.Width, fill=Species)) +
+  stat_summary(geom="bar") +
+  stat_summary(geom="errorbar", width = 0.2) +
+  guides(fill=FALSE)
+
+p1 / (p2 + p3)
+```
+
+
+Other useful packages:
+
+shiny - generating simple web apps (https://colinquirk.shinyapps.io/shinyeyes/)
+
+bookdown - creating ebooks with rmarkdown files (https://bookdown.org/cquirk/LetsExploreStatistics/)
+
+blogdown - creating a personal website with r markdown (http://colinquirk.com/)
