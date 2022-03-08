@@ -64,6 +64,9 @@ COPY ./Data/Homework5_template.Rmd /home/$USER/templates
 COPY ./Data/cross_validation_jb.Rmd /home/$USER/demos
 COPY ./Data/hw6_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/Homework6_template.Rmd /home/$USER/templates
+COPY ./Data/ANOVAs.Rmd /home/$USER/demos
+COPY ./Data/useful_R_packages_2022.Rmd /home/$USER/demos
+
 
 
 #### install stan stuff
