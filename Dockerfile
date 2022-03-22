@@ -123,6 +123,9 @@ RUN apt-get -y update && apt-get install -y \
 r-cran-nloptr \
 cmake
   
+# Define workdir
+WORKDIR /home/$USER/
+
 ## install required R libraries
 RUN Rscript /tmp/requirements.R
 
