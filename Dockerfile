@@ -15,6 +15,7 @@ WORKDIR /root
 ENV USER expdes
 
 RUN mkdir /home/$USER/
+RUN mkdir /home/$USER/.cmdstanr
 
 RUN mkdir /home/$USER/public
 RUN mkdir /home/$USER/demos
