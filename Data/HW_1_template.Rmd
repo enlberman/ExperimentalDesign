@@ -1,0 +1,343 @@
+---
+title: "HW_1 2022"
+name: ""
+worked with:
+output: html_document
+---
+Due: Thursday, 4/14 by 5pm
+165 points
+Topics: Intro to Bayesian data analysis, Problems with NHT, Prediction vs. Explanation, Linear Models
+
+Please turn in this assignment on Canvas.  You should turn in your .Rmd file, i.e., your R markdown file, as well as the corresponding .html (i.e., the knitted Rmarkdown file). 
+
+If you worked with someone on these homework please list them above under your name.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse) # loads many useful packages
+library(rethinking)
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw1_q2_test.encryptr.bin'
+```
+
+#Questions
+
+##Question 1 (25 points total)
+
+**A. Using the logic of McElreath, show how different hypotheses may map onto the same process models and subsequent statistical models (5 points)?  B. How does this make Null Hypothesis Statistical Testing problematic?  What is a better approach (10 points)?  C. Describe an example in Psychology or Neuroscience where a Null hypothesis and an Alternative hypothesis map onto the same process and statistical model.  Also, when making up an example, please make up a different example than the Stroop example that was talked about in lecture.  It would be good if you could think of a real example, but if you’re having trouble you can invent one (10 points).**
+
+**Answer: **
+
+##Question 2 (10 points)
+
+**According to Yarkoni and Westfall, 2017, does Psychology and Neuroscience suffer from an overfitting or underfitting problem?  What drives this problem?  How is this problem related to the replication crisis in Psychology?  Explain 3 solutions to help to counteract this problem. Does p-hacking cause overfitting, underfitting or both?**
+
+**Answer:**
+
+##Question 3 (10 points) [adapted 2E1]
+**Which of the following represents the probability that “it is sunny on Friday”? Modify the q3 vector to match your choices and explain your choices.**
+
+A. P(Friday | Sunny)
+B. P(Sunny | Friday)
+C. P(Sunny & Friday) 
+D. P(Friday & Sunny) / P(Friday)
+E. [P(Friday | Sunny) * P(Sunny)] / P(Friday)
+
+
+```{r Q3}
+q3 <- c('A', 'B', 'C', 'D', 'E')
+```
+
+```{r gradeQ3}
+passed <- grade_my_hw("3", test_file_path,loc)
+show_grade(passed, "3")
+```
+
+##Question 4 (10 points) [adapted 2M3]
+**Suppose that you have one model globe of the Earth and one model globe of Mars. The Earth globe is covered in 70% water and 30% land.  The Mars globe is covered in 1% water and 99% land.  Suppose that one of your friends picks one of these globes at random and tosses it in the air and tells you that her right index finger is touching water.  Given this knowledge, what is the probability that your friend tossed the Earth globe? Call this variable P1. Your friend, tosses another globe and her right index finder is touching land.  Given this information what is the probability that your friend tossed the Mars globe? Call this variable P2. Please show the math for each calculation (what are the priors, likelihoods, how do you apply Bayes formula?) in text below. You can type \* to get multiplication to show up correctly in the knitted file.**
+
+```{r Q4}
+(P1 <- )
+(P2 <- )
+```
+
+
+
+```{r gradeQ4}
+passed <- grade_my_hw("4", test_file_path,loc)
+show_grade(passed, "4")
+```
+
+##Question 5 (15 points) [adapted 2H1]
+**Golden retrievers and golden doodles are both very cute (this is a non-sequitor).  Golden retriever litters are large and 75% of the litter is 4 or more puppies.  Golden doodle litters are smaller and 40% of the time you get 4 or more puppies.  You are at a breeder where there are twice as many golden doodle moms compared to golden retriever moms.  You find out that a mother dog, of unknown breed has given birth to 3 puppies.  What is the probability that that same mother dog's next litter will have more than 4 puppies? Call this variable P5 and show your work (what are the priors, likelihoods, how do you apply Bayes formula?) the math in text below.**
+
+**Answer:** 
+
+```{r Q5}
+(P5 <- )
+```
+
+
+```{r gradeQ5}
+passed <- grade_my_hw("5", test_file_path,loc)
+show_grade(passed, "5")
+```
+
+##Question 6 (15 points)
+```{r Q6}
+
+##Question 6 (15 points)
+
+#Here is the code for the Rasmus Bath example where we were assessing how many people signed up for our salmon shipping service.  The first chunk of code shows you how to calculate the posterior distribution for the probability of signing when you observed 6 people signing up out of 16 
+
+#Try to perform the same simulation but this time using McElreath's grid approximation technique and sampling from the posterior. Call the variable with the posterior distribution posterior_grid.
+
+# Number of random draws from the prior
+n_draws <- 100000
+
+set.seed(2022)
+
+#this prior is our prior belief of the number of Danes that will buy our fish
+prior <- runif(n_draws, min = 0, max = 1) # Here you sample n_draws draws from the prior  
+hist(prior) # It's always good to eyeball the prior to make sure it looks ok.
+
+# Here you define the generative model
+generative_model <- function(theta) {
+  #this is based on the binomial distribution using theta as p
+  #this should return the number of successes out of 16 people
+  #using the probability of success as theta for the binomial
+  num_buy <- rbinom(1, 16, theta)
+  return(num_buy)
+}
+
+# Here you simulate data using the parameters from the prior and the 
+# generative model
+sim_data <- rep(NA, n_draws)
+for(i in 1:n_draws) {
+  sim_data[i] <- generative_model(prior[i])
+}
+
+# Here you filter off all draws that do not match the data.
+#From our data we had 6 yes out of 16 people
+posterior <- prior[sim_data == 6] 
+
+hist(posterior) # Eyeball the posterior
+length(posterior) # See that we got enough draws left after the filtering.
+# There are no rules here, but you probably want to aim
+# for >1000 draws.
+
+# Now you can summarize the posterior, where a common summary is to take the mean
+# or the median posterior, and the 95% credible interval.
+median(posterior)
+mean(posterior)
+max(posterior)
+quantile(posterior, c(0.025, 0.975))
+
+#put your code below here and calculate and display the median mean max and 95% quantile of the posterior.
+######################################
+
+posterior_grid <- 
+```
+
+```{r gradeQ6}
+passed <- grade_my_hw("6", test_file_path,loc)
+show_grade(passed, "6")
+```
+
+##Question 7 (15 points)
+```{r Q7}
+
+##Question 7
+#Now recode the Rasmus Bath example when we get information from the CEO that the signup rate in Denmark is usually between 5-15%.  You can either do this the Bath way or the McElreath way using grid_approximation. Please report the median, mean, max and the 95% credible interval of the posterior call these med, mn, mx, CI_95 (CI_95 should be a vector with like c(ci_low, ci_high)). How has this changed your prediction for the number of signups?
+
+set.seed(2022)
+#Place code below here
+#(Hint use a beta prior)
+###############################
+
+prior <- dbeta
+mn <- 
+med <-
+mx <- 
+CI_95 <-
+
+```
+
+#How has this changed your prediction for the number of signups?
+
+```{r gradeQ7}
+passed <- grade_my_hw("7", test_file_path,loc)
+show_grade(passed, "7")
+```
+
+
+##Question 8. (10 points)
+```{r Q8}
+
+##Question 8.  Use the code below to answer the following questions:
+set.seed(2022)
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+prior <- rep( 1 , 1000 )
+likelihood <- dbinom( 6 , size=9 , prob=p_grid )
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+set.seed(100)
+samples <- sample( p_grid , prob=posterior , size=1e4 , replace=TRUE )
+
+#A.  What proportion of the posterior probability lies below p = 0.35?
+A <-
+#B.  10% of posterior probability lies above what value of p?
+B <-
+#C.  The highest density 50% of the poster probability lies between what values of p?
+C <-
+
+#Now calculate how much the above probabilities change, when we use a different
+#prior.
+p_grid <- seq( from=0 , to=1 , length.out=1000 )
+prior <- dbeta(p_grid, 7, 30) 
+likelihood <- dbinom( 6 , size=9 , prob=p_grid )
+posterior <- likelihood * prior
+posterior <- posterior / sum(posterior)
+set.seed(100)
+samples <- sample( p_grid , prob=posterior , size=1e4 , replace=TRUE )
+
+#D.  What value is our new prior centered on?
+D <- 
+#E.  What proportion of the posterior probability lies below p = 0.35?
+E <- 
+#F.  10% of posterior probability lies above what value of p?
+qF <-
+#G.  The highest density 50% of the poster probability lies between what values of p?
+G <- 
+```
+
+
+```{r gradeQ81}
+passed <- grade_my_hw("8.1", test_file_path,loc)
+show_grade(passed, "8.1")
+```
+```{r gradeQ82}
+passed <- grade_my_hw("8.2", test_file_path,loc)
+show_grade(passed, "8.2")
+```
+```{r gradeQ83}
+passed <- grade_my_hw("8.3", test_file_path,loc)
+show_grade(passed, "8.3")
+```
+```{r gradeQ84}
+passed <- grade_my_hw("8.4", test_file_path,loc)
+show_grade(passed, "8.4")
+```
+```{r gradeQ85}
+passed <- grade_my_hw("8.5", test_file_path,loc)
+show_grade(passed, "8.5")
+```
+```{r gradeQ86}
+passed <- grade_my_hw("8.6", test_file_path,loc)
+show_grade(passed, "8.6")
+```
+```{r gradeQ8}
+passed <- grade_my_hw("8.7", test_file_path,loc)
+show_grade(passed, "8.7")
+```
+
+
+##Question 9 (15 points)
+```{r Q9}
+def1 <- 'y(i) ~ Normal(mu, sigma)'
+
+def2 <- 'mu ~ Normal(5, 30)'
+
+def3 <- 'sigma ~ Beta(3,25)'
+
+#A. Label the likelihood and the priors in the above model definition.
+likelihood <-
+mu_prior <- 
+sigma_prior <-
+
+#B. How many parameters are in the posterior distribution for the above model?
+n_params <- 
+
+```
+
+```{r gradeQ91}
+passed <- grade_my_hw("9.1", test_file_path,loc)
+show_grade(passed, "9.1")
+```
+
+```{r gradeQ92}
+passed <- grade_my_hw("9.2", test_file_path,loc)
+show_grade(passed, "9.2")
+```
+
+C. Using the model definition above, write down the appropriate form of Bayes' Theorem that includes the proper likelihood and priors.
+
+D. In the following model definition, how many parameters are in the posterior distribution? Our posterior contains a distribution of what shapes? Do we have strange values for our prior on Beta and Sigma?  Explain (you may want to plot the posterior to see how it looks). 
+
+
+y(i) ~ Normal(mu, sigma)
+
+mu = alpha + Beta*x(i)
+
+alpha ~ Normal(5, 30)
+
+Beta ~ Normal(1,5)
+
+sigma ~ Beta(3,25)
+
+
+
+
+```{r}
+##Question 10
+#Load the Howell height data
+
+data("Howell1")
+d <-Howell1
+
+#Select out all of the rows in the Howell data with ages below 18 years of age (you should end up with a data frame with 192 rows)
+
+```
+
+```{r Q101}
+#A.  Fit a linear regression to predict height from weight using the lm function and writeout your summary table in R.  Interpret your estimates.  
+
+lm1 <- 
+summary(lm1)
+```
+For every one unit increase in weight, how much taller does the model predict a child gets?
+
+```{r gradeQ101}
+passed <- grade_my_hw("10.1", test_file_path,loc)
+show_grade(passed, "10.1")
+```
+
+```{r Q102}
+#B. Fit a linear regression to predict height from weight using quap. 
+quap1 <- 
+precis(quap1)
+```
+Do your estimates match what you get from lm?
+
+```{r gradeQ102}
+passed <- grade_my_hw("10.2", test_file_path,loc)
+show_grade(passed, "10.2")
+```
+
+#C.  How much do you have to change your priors in the quap model to get different results from lm?
+```{r 103}
+
+```
+
+**Describe here:**
+
+#Question 11
+
+Please write out your research question.  What parameters are you trying to estimate from your data?  Write out your research question (or a simplified version of it) in Bayesian form.  How do you think your parameters are distributed?  If you would like you to, you can also read ahead in the book to write a more complex model if your research question involves interactions, generalized linear models (like a logistic regression), etc.  Please justify your choices of parameters and their distributions.
