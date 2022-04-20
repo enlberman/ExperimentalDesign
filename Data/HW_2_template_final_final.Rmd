@@ -1,0 +1,299 @@
+---
+title: "HW_2 2022"
+author:
+output: html_document
+---
+Due: Monday, 4/28 by 5pm
+
+Points: 165
+
+Topics: Linear and Polynomial Regression, Multiple Regression, Causal Modeling
+
+Please turn in this assignment on Canvas.  You should turn in your .Rmd file, i.e., your R markdown file, as well as the corresponding .html or .pdf file (i.e., the knitted Rmarkdown file). 
+
+**If you worked with someone on these homework please list them here:**
+
+worked with:
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse) # loads many useful packages
+library(rethinking)
+library(dagitty)
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw2_q2_test.encryptr.bin'
+```
+
+
+## Question 1.
+
+**The below code produces the figure 4.10**
+
+```{r}
+data(Howell1)
+d <- Howell1 
+d2 <- d[ d$age >= 18 , ]
+# define the average weight, x-bar
+xbar <- mean(d2$weight)
+d2$centered_weights<-d2$weight-xbar
+
+
+# fit model
+m4.3 <- quap(
+    alist(
+        height ~ dnorm( mu , sigma ) ,
+        mu <- a + b*( centered_weights ) ,
+        a ~ dnorm( 178 , 20 ) ,
+        b ~ dlnorm( 0 , 1 ) ,
+        sigma ~ dunif( 0 , 50 )
+    ) , data=d2 )
+
+# define sequence of weights to compute predictions for
+# these values will be on the horizontal axis
+weight.seq <- seq( from=-20 , to=20 , by=1 )
+
+sim.height <- sim( m4.3 , data=list(centered_weights=weight.seq) )
+
+height.PI <- apply( sim.height , 2 , PI , prob=0.89 )
+
+
+# use link to compute mu
+# for each sample from posterior
+# and for each weight in weight.seq
+mu <- link( m4.3 , data=data.frame(centered_weights=weight.seq) )
+
+# summarize the distribution of mu
+mu.mean <- apply( mu , 2 , mean )
+mu.PI <- apply( mu , 2 , PI , prob=0.89 )
+mu.HPDI <- apply(mu, 2, HPDI)
+
+# plot heighs vs. centered weights
+plot( height ~ centered_weights,d2 , col=col.alpha(rangi2,0.5))
+
+# draw MAP line
+lines( weight.seq , mu.mean )
+
+# draw HPDI region for line
+shade( mu.HPDI , weight.seq )
+
+# draw PI region for simulated heights
+shade( height.PI , weight.seq )
+```
+
+**A. What does the narrower shaded interval represent?  What does the wider shaded interval represent?  What makes the narrower interval narrower, and the wider interval wider? (10 points)**
+
+**B. The posterior distribution has how many parameters in it?  What do those parameters describe? (10 points)**
+
+## Question 2
+
+```{r}
+## adapted R code 4.65 (It has been changed a bit)
+d$weight_s <- ( d$weight - mean(d$weight) )/sd(d$weight)
+d$weight_s3 <- d$weight_s^3
+m4.5 <- quap(
+    alist(
+        height ~ dnorm( mu , sigma ) ,
+        mu <- a + b1*weight_s + b3*weight_s3 ,
+        a ~ dnorm( 178 , 20 ) ,
+        b1 ~ dlnorm( 0 , 1 ) ,
+        b3 ~ dnorm( 0 , 1 ) ,
+        sigma ~ dunif( 0 , 50 )
+    ) , data=d )
+
+precis(m4.5)
+
+weight.seq.m4.5 <- seq( from=1 , to=70 , by=1 )
+
+weight_s.seq.m4.5 <- ( weight.seq.m4.5 - mean(d$weight) )/sd(d$weight)
+weight_s3.seq.m4.5 <- weight_s.seq.m4.5^3
+
+fit_data = data.frame(list(weight_s=weight_s.seq.m4.5,
+                           weight_s3=weight_s3.seq.m4.5))
+
+sim.height.m4.5 <- sim( m4.5 , data=fit_data )
+
+height.PI.m4.5 <- apply( sim.height.m4.5 , 2 , PI , prob=0.89 )
+
+mu.m4.5 <- link( m4.5 , data=fit_data )
+
+mu.mean.m4.5 <- apply( mu.m4.5 , 2 , mean )
+mu.PI.m4.5 <- apply( mu.m4.5 , 2 , PI , prob=0.89 )
+mu.HPDI.m4.5 <- apply(mu.m4.5, 2, HPDI)
+
+plot( height ~ weight , d , col=col.alpha(rangi2,0.5) )
+
+lines( weight.seq.m4.5 , mu.mean.m4.5 )
+
+shade( mu.HPDI.m4.5 , weight.seq.m4.5 )
+
+shade( height.PI.m4.5 , weight.seq.m4.5 )
+```
+
+**A. Using the code above, write out the linear model (look at the exponents carefully) (5 points)**
+
+Write the equation here (surround your equation in dollar signs like $y=x$):
+
+
+**B. What are the units of b1 and b3? (5 points)**
+
+**C. How many parameters are in the posterior distribution?  These parameters compose what kind of function? (5 points)**
+
+**D. Fit another model with only a linear component to these data using quadratic approximation. Plot the model as above and compare. Does the linear + cubic model fit the data better than a model that only had the linear component? Please show/explain how it is or isn’t a better fit. (10 points)**
+
+```{r}
+
+```
+
+**E. Solve for a, b1 and b3 using linear algebra. Do you get the same results as in the quap model? What about lm? (5 points)**
+
+```{r Q2E}
+params_algebra <- 
+lm_fit <- 
+```
+
+They are identical to what `lm` gives us.
+```{r gradeQ25}
+passed <- grade_my_hw("2.5", test_file_path,loc)
+show_grade(passed, "2.5")
+```
+
+
+**The code below performs a prior predictive check for a model predicting height using age for children.**
+
+```{r}
+d3 = d[d$age<18,]
+N = 20
+a = rnorm(N, 100, 20)
+b = rexp(N, 1)
+
+
+plot(NULL, xlim=range(d3$age), ylim=c(0, 200), xlab="age", ylab="height")
+xbar = mean(d3$age)
+for(i in 1:N) {
+    curve(a[i] + b[i] * (x - xbar), from=min(d3$age), to=max(d3$age),
+          add=TRUE, col=col.alpha("black", 0.2))
+}
+```
+
+**F. What problem with our priors is revealed thanks to this prior predictive check? What could we do to change our priors to address this issue? (10 points)**
+
+## Question 3.
+
+**What is the main advantage of using splines over polynomial regression?  What is a disadvantage of using a spline? (10 points)**
+
+
+## Question 4.
+
+**Is it always a good idea to add all potential predictor variables that you can think of into a multiple regression?  When will adding predictors help?  When will it hurt inference? (10 points)**
+
+
+## Question 5.
+
+**The below code will create data of a spurious correlation, where the variable x_spur is spuriously correlated with y.**
+
+```{r}
+N <- 100   #number of cases
+x_real <- rnorm(N) #x_real as Gaussian with mean = 0 and std = 1
+x_spur <- rnorm(N, x_real) #x_spur as Gaussian with mean = x_real
+y <- rnorm(N, x_real) #y as Gaussian with mean = x_real
+d <- data.frame(y, x_real, x_spur) #bind them all together
+#make a scatterplot
+pairs(d)
+
+```
+**A. Please draw a DAG for this spurious relationship (5 points)**
+
+**The below code will create data of a masked relationship between x and y.**
+```{r}
+N <- 100     #number of cases
+rho <- 0.7   #correlation between predictors x_pos and x_neg
+x_pos <- rnorm(N) #x_pos as Gaussian
+x_neg <- rnorm(N, rho*x_pos, sqrt(1-rho^2)) #x_neg correlated with x_pos
+y <- rnorm(N, x_pos - x_neg) #
+
+d <- data.frame(y, x_pos, x_neg) #bind it all together
+pairs(d)
+```
+
+**B. Now draw a DAG for this masked relationship. (5 points) What is the difference in the correlation structure, i.e., the correlation matrix between a spurious correlation and a masked correlation. (5 points)**
+
+**C. How does changing rho, the correlation between the predictors x_neg and x_pos change the amount of masking?  To answer this question, you will need to fit the model (use lm for ease). Try values of rho = 0.7 and =0.999 (10 points)**
+
+
+```{r}
+set.seed(2022)
+rho <- 0.7   #correlation between predictors x_pos and x_neg
+fit1 <- 
+summary(fit1)
+
+set.seed(2022)
+rho <- 0.999   #correlation between predictors x_pos and x_neg
+fit2 <- 
+summary(fit2)
+```
+**Describe Here**
+
+
+
+```{r gradeQ62}
+passed <- grade_my_hw("6.2", test_file_path,loc)
+show_grade(passed, "6.2")
+```
+
+**C. What are the dangers of interpreting a bivariate correlation matrix?  What do you really want to know about the relationship between variables? (5 points)**
+
+
+## Question 6.
+
+**How do randomized controlled experiments allow for causal inference?  What do they do to DAG models?  What needs to be done and what criteria need to be met to draw causal inferences from observational/non-experimental studies? (10 points)**
+
+
+## Question 7.
+
+**[Adjusted questions from Chapter 6]**
+
+```{r}
+dag_6M1 <- dagitty("dag{
+U [unobserved]
+V [unobserved]
+Y -> X
+X <- U -> B <- C -> Y
+U <- A -> C
+C <- V -> Y }")
+coordinates(dag_6M1) <- list(x=c(X=0,Y=2,U=0,A=1,B=1,C=2,V=2.5),
+y=c(X=2,Y=2,U=1,A=0.5,B=1.5,C=1,V=1.5) )
+drawdag(dag_6M1)
+```
+
+**A. The code above will draw a DAG. What paths if any need to be closed to draw causal inferences between the effect of Y -> X?  If there are problematic paths how do you close them?  What variables would you not want to condition on if any? In this DAG can we draw a causal inference from Y -> X(10 points)**
+
+
+
+```{r}
+dag_6H1 <- dagitty("dag{A -> D; A -> M -> D; A <- S -> D; S -> W -> D}")
+coordinates(dag_6H1) <- list(
+x=c(A=0,M=1,D=2,S=1,W=2),
+y=c(A=0.75,M=0.5,D=1,S=0,W=0) )
+drawdag(dag_6H1)
+```
+
+**B. The code above will draw a DAG.  What paths if any need to be closed to draw causal inferences between the effect of M -> D?  If there are problematic paths, how do you close them?  What variables do you not want to condition on if any? In this DAG can we draw a causal inference from M -> D (10 points)**
+
+
+## Question 8
+**Questions related to your own research:**
+
+**A. Using your model and priors from Homework 1 question 11 where you wrote out a model for your research question, perform a prior predictive simulation of your model.  Do you like your choice of priors?  If not, what would you change? (15 points)**
+
+**B. Write a causal model for your research question.  Think of what variables you might include in your causal model that would ruin your experiment.  This is true of both observational and experimental studies.  If your study is an observational study, what variables would you want to manipulate to de-confound your iv.'s of interest?  What are some variables you would not want to include in your multiple regression (15 points)**
+
+**C. If your study is an experimental study, and you found related data in an observational study from a larger dataset, how might your i.v.'s now be confounded with other variables?  Would it be possible for you to condition on certain variables to de-confound them, or is causal inference not possible for your research question in an observational context (i.e., you would have to run an experiment)? (15 points)**
+
