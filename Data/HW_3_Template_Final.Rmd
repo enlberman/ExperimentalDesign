@@ -1,0 +1,348 @@
+---
+title: "HW_3_qs 2022"
+author:
+output: html_document
+---
+Due: 5/12
+
+Points: 210
+
+Topics: Overfitting/Underfitting, Information Criterion, Interactions and MCMC
+
+Please turn in this assignment on Canvas.  You should turn in your .Rmd file, i.e., your R markdown file, as well as the corresponding .html (i.e., the knitted Rmarkdown file). 
+
+**If you worked with someone on these homework please list them here:**
+
+worked with:
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse) # loads many useful packages
+library(rethinking)
+library(dagitty)
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw3_q2_test.encryptr.bin'
+```
+
+
+
+## Question 1.
+
+**Suppose a coin is weighted so that it comes up heads 85% of the time.  What is the entropy of the coin?  What probability of the coin coming up heads will maximize the entropy? What is the entropy? [Adapted 7E2] (10 points)**
+```{r}
+p1 <- c (0.85,0.15)
+entropy1 <- 
+  
+p2 <- #entropy maximizing probabilities
+# compute entropy
+entropy2 <-
+```
+
+```{r gradeQ1}
+passed <- grade_my_hw("1", test_file_path,loc)
+show_grade(passed, "1")
+```
+
+## Question 2.
+
+**What is the difference between model comparison, model averaging and model selection? What information is lost under model selection and model averaging?  What are some dangers with model selection? (10 points)**
+
+
+**Model selection** 
+
+**Model averaging** 
+
+**Model comparison** 
+
+**Dangers of Model Selection**
+
+## Question 3.
+
+**[Adapted 7H1/2]**
+
+```{r}
+data(Laffer)
+d <- Laffer
+d$T <- standardize( d$tax_rate )
+d$R <- standardize( d$tax_revenue )
+
+# linear model
+m7H1a <- quap(
+alist(
+R ~ dnorm( mu , sigma ),
+mu <- a + b*T,
+a ~ dnorm( 0 , 0.2 ),
+b ~ dnorm( 0 , 0.5 ),
+sigma ~ dexp(1)
+) , data=d )
+
+# quadratic model
+m7H1b <- quap(
+alist(
+R ~ dnorm( mu , sigma ),
+mu <- a + b*T + b2*T^2,
+a ~ dnorm( 0 , 0.2 ),
+c(b,b2) ~ dnorm( 0 , 0.5 ),
+sigma ~ dexp(1)
+) , data=d )
+
+# cubic model
+m7H1c <- quap(
+alist(
+R ~ dnorm( mu , sigma ),
+mu <- a + b*T + b2*T^2 + b3*T^3,
+a ~ dnorm( 0 , 0.2 ),
+c(b,b2,b3) ~ dnorm( 0 , 0.5 ),
+sigma ~ dexp(1)
+) , data=d )
+
+
+#You can use the following code to plot each of these models to see how introducing polynomial terms influences fit. 
+
+T_seq <- seq( from=-3.2 , to=1.2 , length.out=30 )
+la <- link( m7H1a , data=list(T=T_seq) )
+lb <- link( m7H1b , data=list(T=T_seq) )
+lc <- link( m7H1c , data=list(T=T_seq) )
+plot( d$T , d$R , xlab="tax rate" , ylab="revenue" )
+mtext( "linear model" )
+lines( T_seq , colMeans(la) )
+shade( apply( la , 2 , PI ) , T_seq )
+plot( d$T , d$R , xlab="tax rate" , ylab="revenue" )
+mtext( "quadratic model" )
+lines( T_seq , colMeans(lb) )
+shade( apply( lb , 2 , PI ) , T_seq )
+plot( d$T , d$R , xlab="tax rate" , ylab="revenue" )
+mtext( "cubic model" )
+lines( T_seq , colMeans(lc) )
+shade( apply( lc , 2 , PI ) , T_seq )
+
+```
+
+**A. Explain what the above code is doing? (5 points)**
+
+**B. Using the rethinking::compare function you will see that the models are pretty similar in terms of fitting the data.  The Wall Street journal said the relationship between corporate tax rate and tax revenue increases and then decreases.  According to them, which model should have had the lowest PSIS?  What warning do we get when we run compare?  What does the warning mean? (5 points)**
+
+```{r}
+
+```
+
+
+**C. Add another linear model for comparison that uses robust regression and re-run compare. (10 points)**
+
+```{r}
+m7H1a_robust <-
+
+rethinking::compare( m7H1a, m7H1b, m7H1c, m7H1a_robust,  func=PSIS )
+```
+
+**Which model has the most weight?  Why?**
+
+**Does running robust regression for the polynomial models change things?  Was the Wall Street journal correct about the relationship between between corporate tax rates and tax revenue?**
+```{r}
+
+m7H1b_robust <-
+m7H1c_robust <-
+
+
+rethinking::compare( m7H1a , m7H1b , m7H1c , m7H1a_robust , m7H1b_robust, m7H1c_robust, func=PSIS )
+
+```
+
+**Written Answer**
+
+
+```{r gradeQ33}
+passed <- grade_my_hw("3.3", test_file_path,loc)
+show_grade(passed, "3.3")
+```
+
+##Question 4 
+
+**A. Draw a DAG for the following statement.  A car will go faster if it has more cylinders and a better fuel injector. You can embedd a hand drawing, use the dagitty package, or use text arrows. (5 points)**
+
+```{r}
+library(dagitty)
+
+dag4a<-dagitty()
+
+drawdag(dag4a)
+
+```
+
+
+**B. Write out the statistical model for that DAG. (5 points)**
+
+**C. Draw a DAG for the following statement.  A car will go faster if it has more cylinders or a better fuel injector. (5 points)**
+
+```{r}
+
+dag4c<-dagitty()
+
+drawdag(dag4c)
+
+
+```
+
+**D. Write out the statistical model for that DAG. (5 points) **
+
+
+##Question 5 [Adapted 8H3]
+**A. Using the data(rugged) fit a model with and without an interaction term for ruggedness and continent in predicting log(GDP). Re-scale the data by the mean of log(GDP) and the max of ruggedness. Mean center ruggedness inside your model. How much improvement in WAIC do you get for the model with the interaction term (15 points)** 
+
+```{r}
+set.seed(2022)
+data(rugged)
+
+m8.3_interaction <-
+  
+
+m8.2_nointeraction <-
+  
+rethinking::compare(m8.3_interaction, m8.2_nointeraction, func=WAIC)
+```
+**Written Response**
+
+
+```{r gradeQ51}
+passed <- grade_my_hw("5.1", test_file_path,loc)
+show_grade(passed, "5.1")
+```
+
+**B. Now adapt the model with the interaction term to use a robust regression using the Student-t distribution with v = 2. How does this robust regression compare the non-robust regression on WAIC?  If you compare with PSIS have you changed any of the pareto k values for the robust regression vs. the non-robust regression? (15 points)** 
+
+```{r}
+set.seed(2022)
+m8.3_interaction_robust <-
+
+
+precis(m8.3_interaction)
+precis (m8.3_interaction_robust)
+
+compare(m8.3_interaction,m8.3_interaction_robust,func=WAIC)
+compare(m8.3_interaction,m8.3_interaction_robust,func=PSIS)
+
+PSISk(m8.3_interaction)
+
+PSISk(m8.3_interaction_robust)
+
+rethinking::compare(m8.3_interaction, m8.2_nointeraction, m8.3_interaction_robust, func=WAIC)
+
+```
+**Written Response**
+
+```{r gradeQ52}
+passed <- grade_my_hw("5.2", test_file_path,loc)
+show_grade(passed, "5.2")
+```
+
+##Question 6 [Adapted 8E1]
+**For each causal relationship below, name a hypothetical third variable that would lead to an interaction effect and explain the interaction effect** 
+
+**A. Smoking causes cancer** (5 points)
+
+
+**B. Height leads to scoring more points in basketball** (5 points)
+
+
+**C. Creativity leads to better scientific questions** (5 points)
+
+##Question 7
+**What are the advantages of Hamiltonian Markov Chain Monte Carlo over other Markov Chain Monte Carlo approaches?  What are the properties of a healthy Markov Chain? (10 points)**
+
+##Question 8. 
+**Here is code to run the ruggedness and continent model for GDP using MCMC**
+
+```{r}
+#NOTE: THIS MODEL MAY TAKE A FEW MINUTES TO RUN
+
+
+# first load and transform/clean the data
+
+data(rugged)
+d <- rugged
+d$log_gdp <- log(d$rgdppc_2000)
+dd <- d[ complete.cases(d$rgdppc_2000) , ]
+
+dd$log_gdp_std <- dd$log_gdp / mean(dd$log_gdp)
+dd$rugged_std <- dd$rugged / max(dd$rugged)
+dd$cid <- ifelse( dd$cont_africa==1 , 1 , 2 )
+
+dat_slim <- list(
+log_gdp_std = dd$log_gdp_std,
+rugged_std = dd$rugged_std,
+cid = as.integer( dd$cid ) )
+
+m9.1_exp <- ulam(
+alist(
+  log_gdp_std ~ dnorm( mu , sigma ) ,
+  mu <- a[cid] + b[cid]*( rugged_std - 0.215 ) ,
+  a[cid] ~ dnorm( 1 , 0.1 ) ,
+  b[cid] ~ dnorm( 0 , 0.3 ) ,
+  sigma ~ dexp( 1 )
+) , data=dat_slim , chains=4 , cores=4, log_lik=TRUE )
+
+precis(m9.1_exp, depth=2)
+```
+
+**A. Run the model without doing a log transform on GDP.  How does that change your coefficients?  How does it change your model fits? Note: this will also affect your mean centering (10 points)**
+
+```{r}
+set.seed(2022)
+
+dd$gdp_std <- 
+dat_slim_notlog <-
+m9.1_exp_notlog <-
+  
+precis(m9.1_exp_notlog, depth=2)
+
+rethinking::compare(m9.1_exp, m9.1_exp_notlog, func = WAIC)
+
+
+```
+**Written Response**
+
+
+```{r gradeQ81}
+passed <- grade_my_hw("8.1", test_file_path,loc)
+show_grade(passed, "8.1")
+```
+
+**B. Going back to the logged GDP model.  What happens if you make your prior on beta very skeptical?  Does it change your confidence that ruggedness interacts with continent in predicting log(GDP)? (10 points)**
+```{r}
+m9.1_exp_skep <-
+precis(m9.1_exp_skep, depth=2)
+
+
+```
+**Written Response**
+
+##Question 9 [adapted 9M3]
+**Re-run the ruggedness model with different numbers of warm-up iterations from 5, 10, 100, 500 and 1000.  Compare the n_eff values.  How much warm-up is required?  Can you ever have more effective samples than the number of samples approximated with your Markov Chain?  Why? (15 points)** 
+```{r, message=FALSE}
+
+m9.1_exp_5 <- 
+m9.1_exp_10 <-
+m9.1_exp_100 <- 
+m9.1_exp_500 <- 
+m9.1_exp_1000 <- 
+```
+
+**Written Responses**
+
+##Question 10
+**Why do we want to use maximum entropy distributions? What does a link function do? A complexity of many Generalized Linear Models is that predictors interact with themselves.  Can you explain this phenomenon (check pages 316-320 in the textbook) (15 points)**
+
+
+
+##Question 11
+**A. Fit the model of your research question using quap and ulam (15 points).**  
+
+**B. Now try to add an additional predictor, an x-way interaction term or a polynomial of one of your existing parameters to lower your models WAIC.  Can you do it?  Does it work? Can you interpret this new parameter? (15 points) [you can fit this with just quap or ulam]**
