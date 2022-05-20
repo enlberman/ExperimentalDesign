@@ -1,0 +1,268 @@
+---
+title: "Homework 4 Key 2022"
+author:
+output: html_document
+---
+Due: 6/2/2022 at 5pm
+
+Points: 165
+
+Topics: Logistic Regression, Mixture Models, Zero-Inflated Models, Ordered Logistic Regression, Multinomial Regression, Mixed Effects Models (random intercepts and slopes), Multivariate Analysis
+
+Please turn in this assignment on Canvas.  You should turn in your .Rmd file, i.e., your R markdown file, as well as the corresponding .html or .pdf file (i.e., the knitted Rmarkdown file). 
+
+**If you worked with someone on these homework please list them here:**
+
+worked with:
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/home/expdes/outputs/")
+
+library(tidyverse) # loads many useful packages
+library(rethinking)
+library(dagitty)
+library(CCA)
+library(lme4)
+loc <-'/home/expdes/public'
+source(file.path(loc,"grdg","srcs","getGrades.r")) # for grading questions
+set.seed(1)  # Ensures reproducable results
+
+theme_set(theme_minimal())  # My personal preference for less ugly default plots
+
+test_file_path <- '/home/expdes/test_files/hw4_q2_test.encryptr.bin'
+```
+
+**Question 1 [adapted 11E1-E3]  [15 points]**
+
+**If an event has a probability of 0.15, what are odds of the event (i.e., the odds ratio)? What are the log odds of the event?**
+
+```{r}
+odds <- 
+log_odds <-
+```
+
+**If an event has a log-odds of -3, what is the probability of the event?**
+
+```{r}
+odds <-
+p_event <-
+```
+
+**Suppose that we are analyzing Kate's experiment where we want to know the proportion of time that participants think about spirituality when viewing images high in curved edges, vs. images low in curved edges. The alpha for the logistic regression was 1.5, and the beta was 2.  What is the proportion of time that people think about spirituality when they view curved edge images compared to non-curved edge images (where x_i = 1 for curved edged images and x_i = 0 for non-curved edged images)?** 
+
+
+```{r}
+noncurved_odds <-
+p_time_noncurved <-
+
+curved_odds <-
+p_time_curve <-
+```
+
+```{r gradeQ1}
+passed <- grade_my_hw("1", test_file_path,loc)
+show_grade(passed, "1")
+```
+
+
+**Question 2**
+
+```{r}
+#The following code will read in Kate's thought content data and run a multilevel logistic regression model with varying intercepts per subject. This code will produce a frequentist model
+
+#You will need to change the directory where you save the data on your own computer.
+
+nsed_data <- read_csv("/home/expdes/data/NSED_SLJ_slim_data.csv")
+
+str(nsed_data)
+
+#Multi-level Logistic Regression Model for predicting Spiritual & Life Journey topic from high non-straight edge images vs. low non-straight edge images
+
+slj_nsed_model <- glmer(SLJ ~ NSED + (1 | Subject),
+                        data = nsed_data,
+                        family = binomial(logit),
+                        control = glmerControl(optimizer = "bobyqa"),
+                        nAGQ = 10)
+
+summary(slj_nsed_model)
+```
+
+**A. Interpret the beta from the logistic regression in terms of probabilities, i.e., how much more likely are participants to think about the spirituality topic when viewing non-straight edge stimuli vs. straight edge stimuli. [5 points]**
+
+```{r}
+curved_odds <-
+curved_prob <-
+
+noncurved_odds <-
+noncurved_prob <-
+
+diff_prob <- 
+```
+
+**Describe**
+
+```{r gradeQ21}
+passed <- grade_my_hw("2.1", test_file_path,loc)
+show_grade(passed, "2.1")
+```
+
+
+**B. Now convert Kate's model into a Bayesian Multi-level Logistic regresssion model.  What are your priors on the alpha's, beta, alpha-bar and sigma?  Are the results any different than the frequentist model? [15 points]**
+
+```{r eval=F}
+#Run this chunk in rstudio and save the model and then it won't run again when you knit
+set.seed(2022)
+m2b <- ulam()
+
+save(m2b, file='m2b.rds')
+```
+
+```{r}
+load('m2b.rds')
+precis(m2b)
+```
+
+```{r gradeQ22}
+passed <- grade_my_hw("2.2", test_file_path,loc)
+show_grade(passed, "2.2")
+```
+
+**C. Now add varying slopes to the Bayesian Multi-level Logistic regression model from part B.  What are your priors on your parameters?  Are the results any different from the varying intercepts model? [15 points]**
+
+```{r eval=F}
+set.seed(2022)
+m2c <- ulam()
+save(m2c, file='m2c.rds')
+```
+
+```{r}
+load('m2c.rds')
+precis(m2c)
+```
+
+```{r gradeQ23}
+passed <- grade_my_hw("2.3", test_file_path,loc)
+show_grade(passed, "2.3")
+```
+**Written component**
+
+**D. Now add varying slopes to the Bayesian Multi-level Logistic regression where you also model the covariance between intercepts and slopes.  Are there any differences? Compare the results to the models from B. and C. Remember when you fit your models with log_lik = TRUE, so that you can use the compare function.  Which one has the lowest WAIC? How do the estimated parameter values compare? [15 points]**
+
+```{r eval=F}
+m2d <- ulam()
+
+save(m2d,file='m2d.rds' )
+```
+```{r}
+load('m2d.rds')
+precis(m2d)
+```
+
+```{r}
+rethinking::compare(m2b,m2c,m2d)
+```
+
+```{r gradeQ24}
+passed <- grade_my_hw("2.4", test_file_path,loc)
+show_grade(passed, "2.4")
+```
+
+**Written Response:**
+
+**Question 3**
+
+**Write a zero-inflated model for a Stroop task where you have correct trials from trying and guessing and incorrect trials from trying and guessing.  Write out the bayesian network that shows the 4 possible outcome and write the likelihood of observing an incorrect trial and the likelihood of observing a correct trial.  If you wanted to restrict the analysis to incorrect trials when trying and correct trials when trying, what do those likelihoods look like?  Please write the formulas as they are written on pages 377 and 378 of the textbook [20 points]**
+
+**Question 4**
+**Why is it important to consider both relative and absolute effects? In what situations are relative effects important?  When can relative effects lead us astray?  Can absolute effects ever lead us astray? [10 points]**
+
+
+**Question 5**
+**What are some advantages of multi-level models over fixed effects models? Can you always perform a multi-level model?  Please explain the concepts of shrinkage and partial pooling as they relate to multi-level models? [10 points]**
+
+
+**Question 6**
+**A. Load the trolley data and run an ordered logistic regression where you have a predictor for Action, Contact, Intention, and the interactions of Intention*Contact and Action*Contact. In addition, add a predictor for Education, which should be an ordered categorical predictor. Run the model and determine if Education is a reliable predictor and what it means. Warning: this model may take a while to run. Be sure to use log_lik=TRUE [10 points]**
+
+```{r eval=F}
+data(Trolley)
+
+m6 <- ulam()
+save(m6, file='m6.rds')
+```
+
+```{r}
+load('m6.rds')
+precis(m6)
+```
+**Describe**
+
+```{r gradeQ6}
+passed <- grade_my_hw("6", test_file_path,loc)
+show_grade(passed, "6")
+```
+
+**B. Now add a varying intercept for participant to the above model to make it a multi-level model.  Is education still a reliable predictor? Has its magnitude changed?  Why do you think it has changed? [10 points]**
+
+```{r eval=F}
+data(Trolley)
+
+
+m7 <- ulam()
+
+save(m7, file='m7.rds')
+```
+
+```{r}
+load('m7.rds')
+precis(m7)
+```
+**Describe**
+
+```{r gradeQ7}
+passed <- grade_my_hw("7", test_file_path,loc)
+show_grade(passed, "7")
+```
+
+**C. Use the compare function to compare the model from A to the model in B.  Which one leads to better out of sample prediction?  Which model has more effective parameters?  Why? [10 points]**
+
+```{r}
+rethinking::compare(m6, m7)
+```
+
+
+**Question 7**
+**How can instrumental variables help you to draw causal inference when you can't close backdoor paths through inclusion of variables in your multiple regression?  How can we use the front-door criterion to draw causal inference when we can't close all backdoor paths? [10 points]**
+
+
+**Question 8**
+**A. Compress all of the metabolic issues (Glucose, pressure, chol) using PCA. Only consider the first PC. Try to interpret the PC1 by its loadings on the original 3 constituent variables. [10 points]**
+
+```{r}
+health = read_csv('/home/expdes/data/TorontoHealth.csv')
+
+(res <- )
+
+summary(res)
+```
+**Describe**
+
+```{r gradeQ8.1}
+passed <- grade_my_hw("8.1", test_file_path,loc)
+show_grade(passed, "8.1")
+```
+
+**B. Perform a Canonical Correlation Analysis (CCA) to assess how a combination of fruits per day, vegetables per day, and daily walking is related to a combination of demographic variables (age, sex, education, and income). Interpret your results. [10 points]**
+
+```{r}
+res <-
+```
+
+**Describe**
+
+
+```{r gradeQ8.2}
+passed <- grade_my_hw("8.2", test_file_path,loc)
+show_grade(passed, "8.2")
+```
