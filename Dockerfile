@@ -74,6 +74,10 @@ COPY ./Data/HW_2_template_final_final.Rmd /home/$USER/templates
 COPY ./Data/hw2_q2_test.encryptr.bin /home/$USER/test_files
 COPY ./Data/HW_3_Template_Final.Rmd /home/$USER/templates
 COPY ./Data/hw3_q2_test.encryptr.bin /home/$USER/test_files
+COPY ./Data/HW_4_Template_Final.Rmd /home/$USER/templates
+COPY ./Data/hw4_q2_test.encryptr.bin /home/$USER/test_files
+COPY ./Data/NSED_SLJ_slim_data.csv /home/$USER/data
+COPY ./Data/TorontoHealth.csv /home/$USER/data
 
 
 #### install stan stuff
